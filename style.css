@@ -1,0 +1,250 @@
+
+
+@import url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Varela&display=swap');
+
+
+
+
+.navbar{
+    background-color: #fff;
+    height: 80px;
+    margin: 20px;
+    border-radius: 16px;
+}
+.login-button {
+    background-color: #009970;
+    color: white;
+    font-size: 14px;
+    padding: 8px 20px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: 0.3s ;
+}
+
+.login-button:hover {
+    background-color: #00b383;
+}
+
+.navbar-toggler {
+    border: none;
+    font-size: 1.25rem;
+
+}
+
+.navbar-toggler:focus,
+.bnt-close:focus {
+    box-shadow: none;
+    outline: none;
+}
+
+.nav-link {
+    color: #666777;
+    font-weight: 500;
+    position: relative;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    color: #000;
+}
+
+@media (min-width :991px) {
+    .nav-link::before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 2px;
+        background-color: #009978;
+        visibility: hidden;
+        transition: 0.3s ease-in-out;
+    }
+
+    .nav-link:hover::before,
+    .nav-link.active::before {
+        width: 100%;
+        visibility: visible;
+    }
+
+}
+
+.navbar-brand img {
+    max-width: 100%; 
+    height: auto;
+}
+img.d-block{
+    height: 800px;
+    
+    
+}
+/*
+.offcanvas{
+    background: transparent !important;
+}*/
+.carousel-item::before {
+    background-color: rgba(0, 0, 0, 0.6);
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+}
+
+.caption{
+    position: absolute;
+    z-index: 2; 
+    top: 35%;
+    color: #fff;
+    padding:  2% 15%;
+}
+.caption h1 {
+    font-size: 40px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    font-family: "Varela", sans-serif;
+    font-family: "Varela", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+  
+  .caption h3 {
+    font-size: 18px;
+    font-weight: normal;
+    margin-bottom: 20px;
+  }
+  
+.btn{
+    margin-bottom: 20px;
+  z-index: 3;
+ }
+ .hero{
+    background-color: #f8f8f8;
+    overflow: hidden;
+ }
+ .heading h1{
+    color: #1bb392;
+    font-size: 55px;
+    text-align: center;
+    margin: 35px 20px ;
+ }
+ .main{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 90%;
+    margin: 65px auto;
+ }
+ .hero-content{
+    flex: 1;
+    width: 600px;
+    margin: 0px 25px ;
+    animation: fadeInUp 3s ease;
+
+ }
+ .hero-content h2{
+    font-size: 38px;
+    margin-bottom: 20px;
+    color: gray;
+ }
+ .hero-content p{
+    font-size: 24px;
+    line-height: 1.5;
+    margin-bottom: 40px;
+    color: rgb(90, 88, 88);
+ }
+ .hero-content button{
+    display: inline-block;
+    background-color: #009970;
+    color: #fff;
+    padding: 12px 24px ;
+    border-radius: 50px;
+    font-size: 20px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s ease;
+ }
+.hero-content button:hover {
+    background-color: #00b383;
+    transform: scale(1.1);
+}
+
+ .hero-image{
+    flex: 1;
+    width: 600px;
+    margin: auto;
+    animation: fadeInRight 3s ease;
+ }
+ img{
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+ }
+ @media screen and  (max-width:780px){
+    .heading h1{
+        font-size: 45px;
+        margin-top: 30px;
+    }
+    .hero{
+        margin: 0;
+    }
+    .main{
+        width: 100%;
+        flex-direction: column;
+        margin: 0px;
+        padding: 0px 40px ;
+    }
+    .hero-content{
+        width: 100%;
+        margin: 35px 0px ;
+        order: 1;
+    }
+    .hero-content h2 {
+        font-size: 30px;
+    }
+    .hero-content p{
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+    .hero-content button{
+        font-size: 16px;
+        padding: 8px 16px ;
+    }
+    .hero-image{
+        width: 100%;
+        order: 2;
+        
+    }
+    .navbar-brand{
+        width: 50%;
+        
+    }
+ }
+ @media screen and (min-width:375px){
+    .navbar{
+        margin: 8px;
+    }
+ }
+ @keyframes fadeInUp {
+    0%{
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    100%{
+        opacity: 1;
+        transform: translateY(0px);
+    }
+ }
+ @keyframes fadeInRight {
+    0%{
+        opacity: 0;
+        transform: translatex(-50px);
+    }
+    100%{
+        opacity: 1;
+        transform: translatex(0px);
+    }
+ }
