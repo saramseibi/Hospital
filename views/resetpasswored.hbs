@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="/login.css" />
+
+    <title>CURAHOPE</title>
+    <link rel="icon" type="image/svg" href="img/doctor-svgrepo-com.svg">
+
+</head>
+
+<body>
+    <div class="container">
+        <div class="forms-container">
+            <div class="signin-signup">
+                <form action="/resetpasswored/<%= token %>" method="post" class="sign-in-form">
+                    <h2 class="title">Reset Password </h2>
+                    <div class="input-field">
+                        <i class="fas fa-user"></i>
+                        <input type="password" placeholder="new password" name="newpassword" required />
+                    </div>
+                    <div class="input-field">
+                        <i class="fas fa-user"></i>
+                        <input type="password" placeholder="confirm password" name="confpassword" required />
+                    </div>
+                    <input type="submit" value="Reset" class="btn solid" />
+                    
+                </form>
+                
+            </div>
+        </div>
+
+        <div class="panels-container">
+            <div class="panel left-panel">
+                <div class="content">
+                    <h3>check your password</h3>
+                </div>
+                <img src="img\undraw_order_confirmed_re_g0if.svg" class="image" alt="" />
+            </div>
+           
+    </div>
+
+</body>
+
+</html>
