@@ -1,14 +1,16 @@
-const mysql = require("mysql2");
+const mysql = require('mysql2');
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
+const crypto = require('crypto');
 const express = require('express')
 const router = express.Router();
-// const db = mysql.createConnection({
-//     host: process.env.DATABASE_HOST,
-//     user: process.env.DATABASE_USER,
-//     password: process.env.DATABASE_PASSWORD,
-//     database: process.env.DATABASE
-// });
+
+const db =  mysql.createConnection({
+    host: process.env.DATABASE_HOST,
+    user: process.env.DATABASE_USER,
+    password: process.env.DATABASE_PASSWORD,
+    database: process.env.DATABASE
+});
 
 
 const login = async (req, res, next) => {
@@ -77,60 +79,90 @@ const signin = async (req, res, next) => {
 };
 
 
-const forgetPassword = (req, res) => {
+const forgetPassword = async (req, res) => {
     const email = req.body.email;
 
-    const token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-
-    const transporter = nodemailer.createTransport({
-        service: "Gmail",
-        host: "smtp.gmail.com",
-        port: 465,
-        secure: true,
-        auth: {
-            user: 'brahmibecem@gmail.com',
-            pass: 'zbtr iyft pmhv xwdr'
-        }
-    });
-
-
-    const mailOptions = {
-        to: email,
-        subject: 'Password Reset Request',
-        text: `Click the following link to reset your password: http://localhost:3000/resetpasswored/${token}`,
-        html: `<p>Click the following link to reset your password:</p><p><a href="http://localhost:3000/resetpasswored/${token}">http://localhost:3000/resetpasswored/${token}</a></p>`
-    };
-
-    transporter.sendMail(mailOptions, (err, info) => {
+    db.query('SELECT user_id, email FROM patient WHERE email = ?', [email], (err, results) => {
         if (err) {
-            console.log(err);
-            res.send('Error sending email');
-        } else {
-            console.log(info);
-            res.send('Password reset email sent');
+            return res.render('forgetpassword', { message: 'Error accessing database' });
+        }
+
+        if (results.length === 0) {
+            return res.render('forgetpassword', { message: 'Email does not exist' });
+        }
+        const user = results[0];
+        const token = crypto.randomBytes(32).toString('hex');
+        const updateQuery = 'UPDATE patient SET token = ? WHERE user_id = ?';
+        try {
+            db.query(updateQuery, [token, user.user_id]);
+
+            const transporter = nodemailer.createTransport({
+                service: "Gmail",
+                host: "smtp.gmail.com",
+                port: 465,
+                secure: true,
+                auth: {
+                    user: process.env.EMAIL_USER,
+                    pass: process.env.EMAIL_PASS
+                }
+            });
+
+
+            const mailOptions = {
+                to: user.email,
+                subject: 'Password Reset Request',
+                text: `Click the following link to reset your password: http://localhost:3007/resetpassword/${token}`,
+                html: `<p>Click the following link to reset your password:</p><p><a href="http://localhost:3007/resetpassword/${token}">click here </a></p>`
+            };
+
+            transporter.sendMail(mailOptions, (err, info) => {
+                if (err) {
+                    console.log(err);
+                    return res.render('forgetpassword', { message: 'Error sending email' });
+                } else {
+                    console.log(info);
+                    return res.render('forgetpassword', { message: 'Password reset email sent' });
+                }
+            });
+        } catch (err) {
+            console.error(err);
+            return res.render('forgetpassword', { message: 'Error generating token' });
         }
     });
 };
 
-router.get('/resetpasswored/:token', (req, res) => {
-    const token = req.params.token;
 
-    res.render('resetpasswored.hbs', { token });
-});
-
-
-router.post('/resetpasswored/:token', (req, res) => {
-    const token = req.params.token;
+//reset password 
+const resetpassword = async (req, res) => {
+    const token = req.body.token ;
     const password = req.body.password;
     const confirm_password = req.body.confirm_password;
 
     if (password !== confirm_password) {
-        res.render('resetpasswored.hbs', { token, message: 'Passwords do not match' });
-        return;
+        return res.render('resetpassword.hbs', { token, message: 'Passwords do not match' });
+
+    }
+    try {
+        const hashedPassword = await bcrypt.hash(password, 8);
+        console.log(hashedPassword);
+        
+        console.log(token);
+        const updateQuery = 'UPDATE patient SET password = ? WHERE token = ?';
+        db.query(updateQuery, [hashedPassword, token]);
+        //await con.promise().query('UPDATE patient SET password = ? WHERE token = ?', [hashedPassword, token]);
+
+        return res.render('resetpassword.hbs', { token, message: 'Password reset successful' });
+    } catch (err) {
+        console.error(err);
+        return res.render('resetpassword.hbs', { token, message: 'Error updating password' });
     }
 
-    res.send('Password reset successful');
-});
+};
 
+/*
+router.get('/resetpassword/:token', (req, res) => {
+    const token = req.params.token;
 
-module.exports = { login, signin, forgetPassword, router };
+    res.render('resetpassword.hbs', { token });
+});*/
+module.exports = { login, signin, forgetPassword, resetpassword, router };

@@ -1,0 +1,460 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+* {
+    margin: 0;
+    padding: 0;
+    outline: none;
+    border: none;
+    text-decoration: none;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    background: rgb(226, 226, 226);
+}
+
+nav {
+    position: sticky;
+    top: 0;
+    bottom: 0;
+    height: 100vh;
+    left: 0;
+    width: 90px;
+    /* width: 280px; */
+    background: #fff;
+    overflow: hidden;
+    transition: 0.5s;
+}
+
+nav:hover {
+    width: 280px;
+    transition: 1s;
+}
+
+.logo {
+    text-align: center;
+    display: flex;
+    margin: 10px 0 0 10px;
+    padding-bottom: 3rem;
+    text-decoration: none;
+}
+
+ul {
+    padding-left: 0 !important;
+}
+
+.logo img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+}
+
+.logo span {
+    font-weight: bold;
+    padding-left: 15px;
+    font-size: 18px;
+    text-transform: uppercase;
+}
+
+a {
+    position: relative;
+    width: 280px;
+    font-size: 14px;
+    color: rgb(85, 83, 83);
+    display: table;
+    padding: 10px;
+}
+
+nav .fas {
+    position: relative;
+    width: 70px;
+    height: 40px;
+    top: 20px;
+    font-size: 20px;
+    text-align: center;
+}
+
+.decoration {
+    text-decoration: none !important;
+}
+
+.item {
+    position: relative;
+    top: 12px;
+    margin-left: 10px;
+    text-decoration: none !important;
+}
+
+
+a:hover {
+    background: #eee;
+}
+
+a:hover i {
+    color: #34AF6D;
+    transition: 0.5s;
+}
+
+.logout {
+    position: absolute;
+    bottom: 0;
+    text-decoration: none;
+}
+
+.contner {
+    display: flex;
+}
+
+.main {
+    position: relative;
+    padding: 20px !important;
+    width: 100%;
+}
+
+.main-top {
+    display: flex;
+    width: 100%;
+    margin-bottom: 20px ;
+}
+
+
+.main .users {
+    display: flex;
+    width: 100%;
+}
+
+.users .card {
+    width: 25%;
+    margin: 10px;
+    background: #fff;
+    text-align: center;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.2);
+    display: flex;
+}
+
+.card {
+
+    align-items: center;
+}
+
+.users .card img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+
+}
+
+.card img {
+    margin-top: -37px;
+    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.1);
+}
+
+.users .card h4 {
+    text-transform: uppercase;
+}
+
+.users .card p,
+.collapse {
+    font-size: 12px;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+.users table {
+    margin: auto;
+}
+
+.users .per span {
+    padding: 5px;
+    border-radius: 10px;
+    background: rgb(223, 223, 223);
+}
+
+.users td {
+    font-size: 14px;
+    padding-right: 15px;
+}
+
+.users .card button {
+    width: 100%;
+    margin-top: 8px;
+    padding: 7px;
+    cursor: pointer;
+    border-radius: 10px;
+    background: transparent;
+    border: 1px solid #4AD489;
+}
+
+.users .card button:hover {
+    background: #4AD489;
+    color: #fff;
+    transition: 0.5s;
+}
+
+/*Attendance List serction  */
+.attendance {
+    margin-top: 20px;
+    text-transform: capitalize;
+}
+
+.attendance-list {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.2);
+}
+
+.tr {
+    border-collapse: collapse;
+    margin: 40px 0;
+    font-size: 15px;
+    min-width: 100%;
+    overflow: hidden;
+    border-radius: 5px 5px 0 0;
+}
+
+table thead tr {
+    color: #fff;
+    background: #34AF6D;
+    text-align: left;
+    font-weight: bold;
+
+}
+
+.tr th,
+.tr td {
+    padding: 12px 15px;
+}
+
+.tr tbody tr {
+    border-bottom: 1px solid #ddd;
+}
+
+.tr tbody tr:nth-of-type(odd) {
+    background: #f3f3f3;
+}
+
+.tr tbody tr.active {
+    font-weight: bold;
+    color: #4AD489;
+}
+
+.tr tbody tr:last-of-type {
+    border-bottom: 2px solid #4AD489;
+}
+
+.tr button {
+    padding: 6px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    background: transparent;
+    border: 1px solid #4AD489;
+}
+
+.tr button:hover {
+    background: #4AD489;
+    color: #fff;
+    transition: 0.5rem;
+}
+
+@media (max-width:1105px) {
+
+    .users {
+        width: 100%;
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        gap: 1em;
+        margin: 0px;
+        padding: 0px 40px;
+        justify-content: center;
+        align-items: center;
+    }
+    .users .card {
+        width: 100%;
+        margin: 10px;
+        background: #fff;
+        text-align: center;
+        border-radius: 10px;
+        padding: 10px;
+        box-shadow: 0 20px 35px rgba(0, 0, 0, 0.2);
+        justify-self: center;
+        align-self: center;
+        
+    }
+    
+    .card {
+    
+        align-items: center;
+    }
+    .users .card img {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+    
+    }
+    
+}
+@media (max-width :889px ){
+    th{
+        display: none;
+    }
+    td {
+        display: block;
+        padding: 0.75rem 1rem;
+    }
+    td::before{
+        font-weight: 700;
+        text-transform: capitalize;
+    }
+    td:first-child{
+        padding-top: 2rem;
+    }
+    td:last-child{
+        padding-bottom: 2rem;
+    }
+
+    td:nth-of-type(1)::before {
+        content: "Name :";
+        padding: 0 40px 0 9px ;
+    }
+    td:nth-of-type(2)::before {
+        content: "Depart :";
+        padding: 0 40px 0 9px ;
+    }
+    td:nth-of-type(3)::before {
+        content: "Days :";
+        padding: 0 40px 0 9px ;
+    }
+    td:nth-of-type(4)::before {
+        content: "Join Time :";
+        padding: 0 40px 0 9px ;
+    }
+    td:nth-of-type(5)::before {
+        content: "Logout Time :";
+        padding: 0 40px 0 9px ;
+    }
+   
+}
+@media (max-width :627px ){
+    .users {
+        width: 100%;
+        display: grid !important;
+        grid-template-rows: repeat(4, 1fr) !important;
+        grid-template-columns: 1fr;
+        gap: 1em;
+        margin: 0px;
+        padding: 0px 10px;
+        justify-content: center;
+        align-items: center;
+    }
+    .decoration{
+        padding-right: 2px;
+    }
+    .item{
+        margin: 0;
+    }
+    .logo{
+        margin-right: 0;
+        padding-right: 0;
+        
+    }
+  
+
+}
+.nav-bar {
+    display: flex;  
+    align-items: center;  
+    justify-content: space-between; 
+    padding: 0.5rem ; 
+    margin:1rem 2rem; 
+  }
+  
+  .nav-title {
+    margin: 0;  
+    font-size: 26px;  
+  }
+  form{
+    position: relative;
+    top: 50%;
+    transition: all 1s;
+    transition: all 1s;
+    width: 40px;
+    height: 40px;
+    background: white;
+    box-sizing: border-box;
+    border-radius: 50px;
+    padding: 5px;
+}
+
+input{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;;
+    height: 40px;
+    line-height: 30px;
+    outline: 0;
+    border: 0;
+    display: none;
+    font-size: 1em;
+    border-radius: 20px;
+    padding: 0 20px;
+}
+
+.fa{
+    box-sizing: border-box;
+    padding: 15px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-radius: 50%;
+    color: #4AD489;
+    text-align: center;
+    transition: all 1s;
+}
+
+form:hover,
+form:valid{
+    width: 200px;
+    cursor: pointer;
+}
+
+form:hover input,
+form:valid input{
+    display: block;
+}
+
+form:hover .fa,
+form:valid .fa{
+    background: #4AD489;
+    color: white;
+}
+
+
+#clear-btn {
+  display: none;
+  position: absolute;
+  top: 70px;
+  bottom:0;
+  left: 0;
+  right: 0;
+  font-size: 20px;
+  color: white;
+  text-align: center; 
+  width: 100%;
+}
+
+form:valid a {
+  display: block;
+}

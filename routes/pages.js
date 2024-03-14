@@ -12,10 +12,14 @@ router.get("/Plogin", (req, res) => {
 router.get("/forgetpassword", (req, res) => {
     res.render("forgetpassword.hbs"); 
 }); 
-router.get("/resetpasswored", (req, res) => {
+/*router.get("/resetpasswored", (req, res) => {
   res.render("resetpasswored.hbs"); 
-}); 
+}); */
+router.get('/resetpassword/:token', (req, res) => {
+    const token = req.params.token;
 
+    res.render('resetpassword.hbs', { token });
+});
 
 router.get("/signin", (req, res) => {
     res.render("Plogin"); 

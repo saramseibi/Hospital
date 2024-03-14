@@ -11,13 +11,13 @@ dotenv.config({ path: './.env' });
 
 //db connexion 
 app.use(express.urlencoded({ extended: true }));
-
+/*
 const db = mysql.createConnection({
     host: process.env.DATABASE_HOST,
     user: process.env.DATABASE_USER,
     password: process.env.DATABASE_PASSWORD,
     database: process.env.DATABASE
-});
+});*/
 //session
 app.use(session({
     secret: 'hospital',
@@ -34,6 +34,7 @@ app.use(express.json());
 
 app.set('view engine', 'hbs');
 //check db connexion
+/*
 db.connect((error) => {
     if (error) {
         console.log(error)
@@ -41,7 +42,7 @@ db.connect((error) => {
         console.log("mysql connected..")
     }
 });
-
+*/
 
 
 
