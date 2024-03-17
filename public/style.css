@@ -14,8 +14,7 @@ body {
 
 .login-button,
 .btn {
-    background-color: #009970;
-    color: white;
+    background-color: transparent;
     font-size: 14px;
     padding: 8px 20px;
     border-radius: 50px !important;
@@ -23,13 +22,13 @@ body {
     transition: 0.3s;
     border: none;
 }
-
+/*
 .login-button:hover,
 .btn:hover {
     background-color: #00b383;
     color: white;
     transform: scale(1.05);
-}
+}*/
 
 .navbar-toggler {
     border: none;

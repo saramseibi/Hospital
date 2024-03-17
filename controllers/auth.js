@@ -5,13 +5,12 @@ const crypto = require('crypto');
 const express = require('express')
 const router = express.Router();
 
-const db =  mysql.createConnection({
+const db = mysql.createConnection({
     host: process.env.DATABASE_HOST,
     user: process.env.DATABASE_USER,
     password: process.env.DATABASE_PASSWORD,
     database: process.env.DATABASE
 });
-
 
 const login = async (req, res, next) => {
     try {
@@ -42,9 +41,7 @@ const login = async (req, res, next) => {
                 return res.render('Plogin', { message: 'An error occurred during registration' });
             } else {
                 console.log(results);
-                return res.render('Plogin', {
-                    message: 'User registered successfully'
-                });
+                return res.render('patientacount.hbs');
             }
         });
     } catch (error) {
@@ -71,7 +68,7 @@ const signin = async (req, res, next) => {
         if (!isMatch) {
             return res.render('Plogin', { message: 'Incorrect password' });
         } else {
-            return res.render('Plogin', { message: 'User login successfully' });
+            return res.render('patientacount');
         }
     } catch (error) {
         next(error);
@@ -134,7 +131,7 @@ const forgetPassword = async (req, res) => {
 
 //reset password 
 const resetpassword = async (req, res) => {
-    const token = req.body.token ;
+    const token = req.body.token;
     const password = req.body.password;
     const confirm_password = req.body.confirm_password;
 
@@ -145,13 +142,14 @@ const resetpassword = async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash(password, 8);
         console.log(hashedPassword);
-        
+
         console.log(token);
         const updateQuery = 'UPDATE patient SET password = ? WHERE token = ?';
         db.query(updateQuery, [hashedPassword, token]);
         //await con.promise().query('UPDATE patient SET password = ? WHERE token = ?', [hashedPassword, token]);
 
-        return res.render('resetpassword.hbs', { token, message: 'Password reset successful' });
+        return res.render('Plogin.hbs', { token, message: 'Password reset successful' });
+        
     } catch (err) {
         console.error(err);
         return res.render('resetpassword.hbs', { token, message: 'Error updating password' });
@@ -159,10 +157,58 @@ const resetpassword = async (req, res) => {
 
 };
 
-/*
-router.get('/resetpassword/:token', (req, res) => {
-    const token = req.params.token;
+const search = (req, res) => {
+    console.log('Query parameters:', req.query);
+    const name = req.query.name || '';
+    const query = 'SELECT * FROM searchp WHERE LOWER(name) LIKE LOWER(?)';
+    const values = [`%${name}%`];
 
-    res.render('resetpassword.hbs', { token });
-});*/
-module.exports = { login, signin, forgetPassword, resetpassword, router };
+    console.log('Executing query:', query);
+    console.log('With values:', values);
+    db.query(query, values, (error, results) => {
+        if (error) {
+            console.error(error);
+            return res.status(500).send('An internal server error occurred');
+        }
+
+        if (results.length > 0) {
+            return res.render('patientacount.hbs', { searchp: results });
+        } else {
+            return res.render('patientacount.hbs', { searchp: [], message: 'No search results found' });
+        }
+    });
+};/*
+const search = (req, res) => {
+    let query = 'SELECT * FROM searchp';
+    let values = [];
+    const name = req.query.name;
+
+    if (name) {
+        query += ' WHERE LOWER(name) LIKE LOWER(?)';
+        values = [`%${name}%`];
+    }
+
+    db.query(query, values, (error, doctors) => {
+        if (error) {
+            console.error(error);
+            return res.status(500).send('An internal server error occurred');
+        }
+
+        const message = name && doctors.length === 0 ? 'No search results found' : '';
+       return res.render('patientacount.hbs', { searchp: doctors, message: message });
+    });
+};*//*
+const logout= (req, res) => {
+    req.logout();
+  if (!req.session) {
+    req.session.destroy(function(_err) {
+      res.redirect('accuiel');
+    });
+  }
+  else {
+    res.redirect('/Plogin');
+  }
+  };
+  */
+
+module.exports = { login, signin, forgetPassword, resetpassword, search, router };

@@ -1,15 +1,13 @@
 const express = require("express");
 const app = express();
 const path = require('path');
-const mysql = require("mysql2");
 const dotenv = require("dotenv");
 const session = require('express-session');
 
+
+
 dotenv.config({ path: './.env' });
 
-
-
-//db connexion 
 app.use(express.urlencoded({ extended: true }));
 /*
 const db = mysql.createConnection({
@@ -43,16 +41,24 @@ db.connect((error) => {
     }
 });
 */
-
-
-
-
+//logout
+app.post('/logout', (req, res) => {
+    req.session.destroy((err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send('Logout error');
+      } else {
+        res.clearCookie('session_id'); 
+        res.redirect('/accuiel'); 
+      }
+    });
+  });
 app.use('/', require('./routes/pages'));
 app.use('/auth', require('./routes/auth'));
 const f = require('./controllers/auth');
 app.use('/auth', f.router);
 
-//check server connexion
+// server connexion
 app.listen(3007, () => {
     console.log("server connected");
 });

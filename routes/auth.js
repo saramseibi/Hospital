@@ -8,7 +8,7 @@ router.post("/login", authController.login);
 router.post("/signin",authController.signin);
 router.post("/forget-password",authController.forgetPassword);
 router.post("/resetpassword",authController.resetpassword);
-
+router.get("/search",authController.search);
 
 
 module.exports = router;

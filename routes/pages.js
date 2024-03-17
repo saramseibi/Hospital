@@ -20,7 +20,10 @@ router.get('/resetpassword/:token', (req, res) => {
 
     res.render('resetpassword.hbs', { token });
 });
+router.get("/patientacount", (req, res) => {
 
+    res.render("patientacount.hbs");
+});
 router.get("/signin", (req, res) => {
     res.render("Plogin"); 
 });
