@@ -74,22 +74,25 @@ nav .fas {
     font-size: 20px;
     text-align: center;
 }
-
 .decoration {
     text-decoration: none !important;
+    display: grid ;
+    grid-template-rows: 1fr ;
+    grid-template-columns: repeat(2, 75px );
+    gap:  0 px !important;
+    padding: 10px ;
 }
-
+a.decoration:hover{
+    background-color: #ddd;
+}
 .item {
     position: relative;
     top: 12px;
     margin-left: 10px;
     text-decoration: none !important;
+    padding: 5px;
 }
 
-
-a:hover {
-    background: #eee;
-}
 
 a:hover i {
     color: #34AF6D;

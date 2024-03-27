@@ -11,7 +11,7 @@ const db = mysql.createConnection({
     password: process.env.DATABASE_PASSWORD,
     database: process.env.DATABASE
 });
-
+// login 
 const login = async (req, res, next) => {
     try {
 
@@ -39,15 +39,19 @@ const login = async (req, res, next) => {
             if (error) {
                 console.log(error);
                 return res.render('Plogin', { message: 'An error occurred during registration' });
-            } else {
+            }else {
                 console.log(results);
-                return res.render('patientacount.hbs');
+                req.session.name = Username;
+                return res.redirect('/patientacount');
             }
+         
         });
+
     } catch (error) {
         console.log(error);
         next(error);
     }
+
 };
 //sign-in
 const signin = async (req, res, next) => {
@@ -75,7 +79,7 @@ const signin = async (req, res, next) => {
     }
 };
 
-
+// forget password 
 const forgetPassword = async (req, res) => {
     const email = req.body.email;
 
@@ -149,14 +153,14 @@ const resetpassword = async (req, res) => {
         //await con.promise().query('UPDATE patient SET password = ? WHERE token = ?', [hashedPassword, token]);
 
         return res.render('Plogin.hbs', { token, message: 'Password reset successful' });
-        
+
     } catch (err) {
         console.error(err);
         return res.render('resetpassword.hbs', { token, message: 'Error updating password' });
     }
 
 };
-
+//search
 const search = (req, res) => {
     console.log('Query parameters:', req.query);
     const name = req.query.name || '';
@@ -177,7 +181,97 @@ const search = (req, res) => {
             return res.render('patientacount.hbs', { searchp: [], message: 'No search results found' });
         }
     });
-};/*
+};
+// resrvation 
+const reservation = async (req, res, next) => {
+    try {
+        const { username, age, date, time, email } = req.body;
+
+
+        const appointmentDateTime = new Date(`${date}T${time}`);
+        const now = new Date();
+        now.setHours(0, 0, 0, 0);
+
+
+        if (appointmentDateTime < now) {
+            return res.render('reservationsam.hbs', {
+                message: "The appointment time can't have past already. Please select another day."
+            });
+        }
+
+        const appointmentHour = appointmentDateTime.getHours();
+        if (appointmentHour < 8 || appointmentHour >= 15) {
+            return res.render('reservationsam.hbs', {
+                message: 'Appointments must fall between 8 a.m. and 4 p.m. Please select another time.'
+            });
+        }
+
+
+        const [timeSlotTaken] = await db.promise().query(
+            `SELECT COUNT(*) AS count
+             FROM samdavid
+             WHERE date = ? AND time = ?`,
+            [date, time]
+        );
+
+        if (timeSlotTaken[0].count > 0) {
+            return res.render('reservationsam.hbs', {
+                message: 'This time slot has already been taken. Please select another time.'
+            });
+        }
+
+
+        const [dailyLimitReached] = await db.promise().query(
+            `SELECT COUNT(*) AS count
+             FROM samdavid
+             WHERE date = ?`,
+            [date]
+        );
+
+        if (dailyLimitReached[0].count >= 4) {
+            return res.render('reservationsam.hbs', {
+                message: 'The daily maximum of eight patients has been achieved. Please select another day.'
+            });
+        }
+        const [queryResult] = await db.promise().query(
+            `SELECT user_id FROM patient WHERE name = ?`, [username]
+        );
+
+        let user_id = null;
+        if (queryResult.length > 0) {
+            user_id = queryResult[0].user_id;
+        }
+        const appointmentData = {
+            name: username,
+            email: email,
+            age: age,
+            date: date,
+            time: time,
+            doctorname: 'sam david',
+            patient_id: user_id,
+        };
+
+        db.query('INSERT INTO samdavid SET ?', appointmentData, (error, results) => {
+            if (error) {
+                return res.render('reservationsam.hbs', {
+                    message: 'An error occurred'
+                });
+            }
+
+            return res.render('reservationsam.hbs', {
+                message: 'Your appointment has been successfully booked.'
+            });
+
+        });
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+};
+// edit profile 
+
+
+/*
 const search = (req, res) => {
     let query = 'SELECT * FROM searchp';
     let values = [];
@@ -211,4 +305,4 @@ const logout= (req, res) => {
   };
   */
 
-module.exports = { login, signin, forgetPassword, resetpassword, search, router };
+module.exports = { login, signin, forgetPassword, resetpassword, search, reservation,router };

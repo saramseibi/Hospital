@@ -21,6 +21,7 @@ app.use(session({
     secret: 'hospital',
     resave: false,
     saveUninitialized: true,
+    cookie: { secure: false } 
 }));
 
 
