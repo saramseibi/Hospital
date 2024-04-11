@@ -4,7 +4,8 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const express = require('express')
 const router = express.Router();
-
+const multer = require('multer');
+//const { upload } = require('../middleware/multerConfig');
 const db = mysql.createConnection({
     host: process.env.DATABASE_HOST,
     user: process.env.DATABASE_USER,
@@ -39,12 +40,12 @@ const login = async (req, res, next) => {
             if (error) {
                 console.log(error);
                 return res.render('Plogin', { message: 'An error occurred during registration' });
-            }else {
+            } else {
                 console.log(results);
                 req.session.name = Username;
                 return res.redirect('/patientacount');
             }
-         
+
         });
 
     } catch (error) {
@@ -60,25 +61,29 @@ const signin = async (req, res, next) => {
         const { Username, password } = req.body;
 
 
-        let [userResults] = await db.promise().query('SELECT name , password FROM patient WHERE name = ?', [Username]);
+        let [userResults] = await db.promise().query('SELECT user_id, name, image, password FROM patient WHERE name = ?', [Username]);
 
         if (userResults.length === 0) {
             return res.render('Plogin', { message: 'No user found with that username' });
         }
 
         const user = userResults[0];
-        //console.log(password, user.password);
+
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.render('Plogin', { message: 'Incorrect password' });
         } else {
-            return res.render('patientacount');
+
+            req.session.name = user.name;
+            req.session.userId = user.user_id;
+            req.session.image = user.image; 
+            return res.redirect('/patientacount');
         }
     } catch (error) {
+        console.log(error);
         next(error);
     }
 };
-
 // forget password 
 const forgetPassword = async (req, res) => {
     const email = req.body.email;
@@ -269,7 +274,120 @@ const reservation = async (req, res, next) => {
     }
 };
 // edit profile 
+/*const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'public/uploads/');
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, file.fieldname + '-' + uniqueSuffix + '.' + file.originalname.split('.').pop());
+    }
+});
 
+const upload = multer({ storage: storage });*/
+
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+      cb(null, 'public/uploads/')
+    },
+    filename: function(req, file, cb) {
+    console.log('Original filename received:', file.originalname);
+      cb(null, file.originalname);
+     
+    }
+    
+  });
+
+  
+  
+  const upload = multer({ storage: storage })
+
+const editprofile = async (req, res) => {
+    const user_id = req.session.userId;
+    const { name, password, cpassword } = req.body;
+
+    if (password !== cpassword) {
+        return res.render('editprofile', {
+            message: "Passwords do not match.",
+        });
+        
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 8);
+
+    let filepath = req.file ? req.file.path : null; 
+
+  
+    let username;
+    let userProfileImagePath;
+
+    try {
+  
+        await db.promise().query('UPDATE patient SET name = ?, password = ?, image = ? WHERE user_id = ?', [name, hashedPassword, filepath, user_id]);
+
+        const [userResult, fields] = await db.promise().query('SELECT name, image FROM patient WHERE user_id = ?', [user_id]);
+        const user = userResult[0];
+
+        if (user) {
+            if (user) {
+                req.session.name = user.name;
+                req.session.image = user.image; 
+                await req.session.save();
+                return res.redirect('/patientacount');  // Redirect to display the updated information
+            }
+        } else {
+            
+            throw new Error('User not found.');
+        }
+    } catch (err) {
+        console.error(err);
+        return res.render('editprofile', {
+            message: "An error occurred",
+        });
+    }
+
+
+    return res.render('patientacount', {
+        message: "Profile updated successfully!",
+        username: username,
+        userProfileImagePath: userProfileImagePath
+    });
+};
+/*const editprofile = async (req, res) => {
+    const user_id = req.session.userId;
+    const { name, password, cpassword } = req.body;
+    if (password !== cpassword) {
+        return res.send("Passwords do not match.");
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 8);
+    let filepath = req.file.path; // Assuming 'fileToUpload' is the field name for the profile image
+
+    // Update database (remember to handle this according to your schema and security practices)
+    db.query('UPDATE patient SET name = ?, password = ?, image = ? WHERE user_id = ?', [name, hashedPassword, filepath, user_id ], (err, results) => {
+        if (err) {
+            return res.status(500).send(err.message);
+        }
+        return res.render('editprofile.hbs', {
+            message: "Profile updated successfully!"
+        });
+    });
+    try {
+        const userQuery = 'SELECT name, image FROM patient WHERE user_id = ?';
+        const userResult = await db.query(userQuery, [user_id]);
+        const user = userResult[0];
+        
+        // Passing the data to the template
+        res.render('patientacount', {
+          username: user.name,
+          userProfileImagePath: user.image|| 'default-profile.png' // Use a default image if none is set
+        });
+      } catch (err) {
+        console.error(err);
+        res.status(500).send('An error occurred');
+      }
+};
+*/
 
 /*
 const search = (req, res) => {
@@ -305,4 +423,4 @@ const logout= (req, res) => {
   };
   */
 
-module.exports = { login, signin, forgetPassword, resetpassword, search, reservation,router };
+module.exports = { login, signin, forgetPassword, resetpassword, search, editprofile, upload, reservation, router };

@@ -23,8 +23,13 @@ router.get('/resetpassword/:token', (req, res) => {
 });
 router.get("/patientacount", (req, res) => {
     console.log(`Session Name: ${req.session.name}`);
+    console.log(`Session id: ${req.session.userId}`);
+    console.log(`Session image: ${req.session.image }`);
     if(req.session.name) {
-        res.render('patientacount.hbs', { username: req.session.name });
+        res.render('patientacount.hbs', { 
+            username: req.session.name, 
+            userProfileImagePath: req.session.image  // Pass the image path to the template
+        });
     } else {
         res.redirect('/Plogin'); 
     }

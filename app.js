@@ -1,14 +1,27 @@
 const express = require("express");
-const app = express();
 const path = require('path');
 const dotenv = require("dotenv");
 const session = require('express-session');
+const { engine } = require('express-handlebars');
+const app = express();
+/*
+const multer = require('multer');
 
-
-
+// Multer configuration for image uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // Store images in the 'uploads' directory
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`); // Use timestamp and original name
+  }
+});
+const upload = multer({ storage });
+*/
 dotenv.config({ path: './.env' });
-
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
 /*
 const db = mysql.createConnection({
     host: process.env.DATABASE_HOST,
@@ -28,9 +41,9 @@ app.use(session({
 const publicDirectory = path.join(__dirname, './public');
 
 app.use(express.static(publicDirectory));
-
+app.use('/uploads', express.static('public/uploads'));
 app.use(express.json());
-
+app.engine('handlebars', engine());
 app.set('view engine', 'hbs');
 //check db connexion
 /*

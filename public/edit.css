@@ -27,7 +27,6 @@ label {
 }
 
 input[type="text"],
-input[type="tel"],
 input[type="email"],input[type="password"] {
     width: 95%;
     padding: 8px;
@@ -61,12 +60,7 @@ a{
     text-decoration: none;
     color: #fff;
 }
-input[type="date"] {
-    padding: 8px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
+
 .bnt{
     width: 120px;
     height: 40px;
