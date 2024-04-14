@@ -3,9 +3,12 @@ const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const express = require('express')
+const path = require('path');
 const router = express.Router();
-const multer = require('multer');
-//const { upload } = require('../middleware/multerConfig');
+//const multer = require('multer');
+//const path = require('path');
+
+
 const db = mysql.createConnection({
     host: process.env.DATABASE_HOST,
     user: process.env.DATABASE_USER,
@@ -15,56 +18,78 @@ const db = mysql.createConnection({
 // login 
 const login = async (req, res, next) => {
     try {
-
         console.log(req.body);
         const { Username, email, cin, password, gender } = req.body;
 
-
         let [emailResults] = await db.promise().query('SELECT email FROM patient WHERE email = ?', [email]);
-
         if (emailResults.length > 0) {
             return res.render('Plogin', { message: 'That email is already in use' });
         }
         let [cinResults] = await db.promise().query('SELECT cin FROM patient WHERE cin = ?', [cin]);
-
         if (cinResults.length > 0) {
             return res.render('Plogin', { message: 'That CIN is already in use' });
         }
 
+        const token = crypto.randomBytes(16).toString('hex');
+        const hashedPassword = await bcrypt.hash(password, 8);
 
-        let hashedPassword = await bcrypt.hash(password, 8);
+        await db.promise().query(
+            'INSERT INTO patient SET ?',
+            [{ name: Username, email, cin, password: hashedPassword, gender, token: token, confirmed: false }]
+        );
 
-        console.log(hashedPassword);
-
-        db.query('INSERT INTO patient SET ?', { name: Username, email: email, cin: cin, password: hashedPassword, gender: gender }, (error, results) => {
-            if (error) {
-                console.log(error);
-                return res.render('Plogin', { message: 'An error occurred during registration' });
-            } else {
-                console.log(results);
-                req.session.name = Username;
-                return res.redirect('/patientacount');
-            }
-
-        });
-
+        await sendEmails(email, 'Confirm Your Email', token);
+        res.render('Plogin', { message: 'Confirmation email sent' });
     } catch (error) {
-        console.log(error);
+        console.error(error);
         next(error);
     }
-
 };
+
+async function sendEmails(to, subject, token) {
+    try {
+        const transporter = nodemailer.createTransport({
+            service: "Gmail",
+            host: "smtp.gmail.com",
+            port: 465,
+            secure: true,
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
+            }
+        });
+
+        const mailOptions = {
+            to: to,
+            subject: subject,
+            text: `Click the following link to confirm your email: http://localhost:3007/Plogin/${token}`,
+            html: `<p>Click the following link to confirm your email:</p><p><a href="http://localhost:3007/Plogin/${token}">click here </a></p>`
+        };
+
+        let info = await transporter.sendMail(mailOptions);
+        console.log(info);
+    } catch (err) {
+        console.log(err);
+        throw err; // Rethrow or handle error appropriately
+    }
+}
+
+
 //sign-in
 const signin = async (req, res, next) => {
     try {
         console.log(req.body);
         const { Username, password } = req.body;
 
-
-        let [userResults] = await db.promise().query('SELECT user_id, name, image, password FROM patient WHERE name = ?', [Username]);
-
-        if (userResults.length === 0) {
+        let [userExists] = await db.promise().query('SELECT user_id FROM patient WHERE name = ?', [Username]);
+        if (userExists.length === 0) {
             return res.render('Plogin', { message: 'No user found with that username' });
+        }
+
+
+        let [userResults] = await db.promise().query('SELECT user_id, name, image, password, confirmed FROM patient WHERE name = ? AND confirmed = 1', [Username]);
+        if (userResults.length === 0) {
+            return res.render('Plogin', { message: 'Email has not been confirmed yet' });
         }
 
         const user = userResults[0];
@@ -76,7 +101,7 @@ const signin = async (req, res, next) => {
 
             req.session.name = user.name;
             req.session.userId = user.user_id;
-            req.session.image = user.image; 
+            req.session.image = user.image;
             return res.redirect('/patientacount');
         }
     } catch (error) {
@@ -97,10 +122,14 @@ const forgetPassword = async (req, res) => {
             return res.render('forgetpassword', { message: 'Email does not exist' });
         }
         const user = results[0];
-        const token = crypto.randomBytes(32).toString('hex');
-        const updateQuery = 'UPDATE patient SET token = ? WHERE user_id = ?';
+        const token = crypto.randomBytes(16).toString('hex');
+        const expires = new Date(Date.now() + 3600000);
+        console.log(token);
+        const updateQuery = 'UPDATE patient SET token = ? , tokenexpires = ? WHERE user_id = ?';
+
+
         try {
-            db.query(updateQuery, [token, user.user_id]);
+            db.query(updateQuery, [token, expires, user.user_id]);
 
             const transporter = nodemailer.createTransport({
                 service: "Gmail",
@@ -274,138 +303,77 @@ const reservation = async (req, res, next) => {
     }
 };
 // edit profile 
-/*const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'public/uploads/');
+
+
+const multer = require('multer');
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, path.join(__dirname, '..', 'public', 'uploads'));
     },
-    filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, file.fieldname + '-' + uniqueSuffix + '.' + file.originalname.split('.').pop());
+    filename: function (req, file, cb) {
+        console.log(file);
+        cb(null, file.originalname);
+
     }
 });
 
-const upload = multer({ storage: storage });*/
-
-const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
-      cb(null, 'public/uploads/')
-    },
-    filename: function(req, file, cb) {
-    console.log('Original filename received:', file.originalname);
-      cb(null, file.originalname);
-     
-    }
-    
-  });
-
-  
-  
-  const upload = multer({ storage: storage })
-
-const editprofile = async (req, res) => {
-    const user_id = req.session.userId;
+const upload = multer({ storage: storage });
+router.post('/editprofile', upload.single('fileToUpload'), async (req, res) => {
     const { name, password, cpassword } = req.body;
+    const user_id = req.session.userId;
+    
+    const file = req.file;
+    console.log(req.file)
 
     if (password !== cpassword) {
         return res.render('editprofile', {
-            message: "Passwords do not match.",
+            message: "Passwords do not match."
         });
-        
     }
 
     const hashedPassword = await bcrypt.hash(password, 8);
 
-    let filepath = req.file ? req.file.path : null; 
-
-  
-    let username;
-    let userProfileImagePath;
-
     try {
-  
-        await db.promise().query('UPDATE patient SET name = ?, password = ?, image = ? WHERE user_id = ?', [name, hashedPassword, filepath, user_id]);
-
-        const [userResult, fields] = await db.promise().query('SELECT name, image FROM patient WHERE user_id = ?', [user_id]);
-        const user = userResult[0];
-
-        if (user) {
-            if (user) {
-                req.session.name = user.name;
-                req.session.image = user.image; 
-                await req.session.save();
-                return res.redirect('/patientacount');  // Redirect to display the updated information
-            }
-        } else {
+        const userProfileImagePath = path.join('/uploads', req.file.originalname);
+        let filepath = file ? file.path : null;
+        if (filepath) {
+            await db.promise().query('UPDATE patient SET name = ?, password = ?, image = ? WHERE user_id = ?', [name, hashedPassword, userProfileImagePath, user_id]);
             
-            throw new Error('User not found.');
-        }
+        } 
+
+        const [results] = await db.promise().query('SELECT name, image FROM patient WHERE user_id = ?', [user_id]);
+        const { name:username, image:userProfileImage } = results[0];
+       
+
+        return res.render('patientacount', {
+            message: "Profile updated successfully!",
+            username: username,
+            userProfileImagePath: userProfileImage
+        });
+
     } catch (err) {
         console.error(err);
-        return res.render('editprofile', {
-            message: "An error occurred",
-        });
+        return res.render('editprofile', { message: "An error occurred" });
     }
-
-
-    return res.render('patientacount', {
-        message: "Profile updated successfully!",
-        username: username,
-        userProfileImagePath: userProfileImagePath
-    });
-};
-/*const editprofile = async (req, res) => {
-    const user_id = req.session.userId;
-    const { name, password, cpassword } = req.body;
-    if (password !== cpassword) {
-        return res.send("Passwords do not match.");
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 8);
-    let filepath = req.file.path; // Assuming 'fileToUpload' is the field name for the profile image
-
-    // Update database (remember to handle this according to your schema and security practices)
-    db.query('UPDATE patient SET name = ?, password = ?, image = ? WHERE user_id = ?', [name, hashedPassword, filepath, user_id ], (err, results) => {
-        if (err) {
-            return res.status(500).send(err.message);
-        }
-        return res.render('editprofile.hbs', {
-            message: "Profile updated successfully!"
-        });
-    });
-    try {
-        const userQuery = 'SELECT name, image FROM patient WHERE user_id = ?';
-        const userResult = await db.query(userQuery, [user_id]);
-        const user = userResult[0];
-        
-        // Passing the data to the template
-        res.render('patientacount', {
-          username: user.name,
-          userProfileImagePath: user.image|| 'default-profile.png' // Use a default image if none is set
-        });
-      } catch (err) {
-        console.error(err);
-        res.status(500).send('An error occurred');
-      }
-};
-*/
-
+   
+});
 /*
 const search = (req, res) => {
     let query = 'SELECT * FROM searchp';
     let values = [];
     const name = req.query.name;
-
+ 
     if (name) {
         query += ' WHERE LOWER(name) LIKE LOWER(?)';
         values = [`%${name}%`];
     }
-
+ 
     db.query(query, values, (error, doctors) => {
         if (error) {
             console.error(error);
             return res.status(500).send('An internal server error occurred');
         }
-
+ 
         const message = name && doctors.length === 0 ? 'No search results found' : '';
        return res.render('patientacount.hbs', { searchp: doctors, message: message });
     });
@@ -423,4 +391,4 @@ const logout= (req, res) => {
   };
   */
 
-module.exports = { login, signin, forgetPassword, resetpassword, search, editprofile, upload, reservation, router };
+module.exports = { login, signin, forgetPassword, resetpassword, search, reservation,upload, router };

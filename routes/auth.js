@@ -11,7 +11,6 @@ router.post("/forget-password",authController.forgetPassword);
 router.post("/resetpassword",authController.resetpassword);
 router.get("/search",authController.search);
 router.post("/reservation",authController.reservation);
-//router.post("/editprofile",authController.editprofile);
-router.post('/editprofile', upload.single('fileToUpload'), authController.editprofile);
+//router.post('/editprofile', upload.single('fileToUpload'), authController.editprofile);
 
 module.exports = router;
