@@ -90,6 +90,7 @@ a.decoration:hover{
     top: 12px;
     margin-left: 10px;
     text-decoration: none !important;
+    text-transform: lowercase !important; 
     padding: 5px;
 }
 

@@ -8,7 +8,7 @@ const db = mysql.createConnection({
     database: process.env.DATABASE
 });
 router.get("/accuiel", (req, res) => {
-    res.render("accuiel"); 
+    res.render("accuiel");
 });
 router.get('/Plogin/:token', async (req, res) => {
     try {
@@ -23,15 +23,15 @@ router.get('/Plogin/:token', async (req, res) => {
     } catch (error) {
         console.error('Error confirming email:', error);
         res.status(500).render('error', { message: 'Internal server error' });
-    }  
+    }
 
 });
 router.get("/Plogin", (req, res) => {
-    res.render("Plogin.hbs"); 
+    res.render("Plogin.hbs");
 });
 router.get("/forgetpassword", (req, res) => {
-    res.render("forgetpassword.hbs"); 
-}); 
+    res.render("forgetpassword.hbs");
+});
 
 /*router.get("/resetpasswored", (req, res) => {
   res.render("resetpasswored.hbs"); 
@@ -42,28 +42,47 @@ router.get('/resetpassword/:token', (req, res) => {
     res.render('resetpassword.hbs', { token });
 });
 router.get("/patientacount", (req, res) => {
-    console.log(`Session Name: ${req.session.name}`);
-    console.log(`Session id: ${req.session.userId}`);
-    console.log(`Session image: ${req.session.image }`);
-    if(req.session.name) {
-        res.render('patientacount.hbs', { 
-            username: req.session.name, 
-            userProfileImage: req.session.image  
-        });
-    } else {
-        res.redirect('/Plogin'); 
+    if (!req.session.name) {
+        return res.redirect('/Plogin');
     }
+    var sql = 'SELECT ID, name, specialization FROM doctors';
+    db.query(sql, function (error, results) {
+        if (error) {
+            return next(error);
+        }
+
+        if (results.length > 0) {
+            console.log(`Session Name: ${req.session.name}`);
+            console.log(`Session id: ${req.session.userId}`);
+            console.log(`Session image: ${req.session.image}`);
+            console.log(results);
+            res.render('patientacount.hbs', {
+                doctors: results,
+                username: req.session.name,
+                userProfileImage: req.session.image
+            });
+        } else {
+        
+            res.render('patientacount.hbs', {
+                username: req.session.name,
+                userProfileImage: req.session.image
+            });
+        }
+    });
 });
 router.get("/reservationsam", (req, res) => {
 
     res.render("reservationsam.hbs");
 });
+router.get("/doctoraccount", (req, res) => {
+    res.render("doctoraccount.hbs");
+})
 router.get("/signin", (req, res) => {
-    res.render("Plogin"); 
+    res.render("Plogin");
 });
 
 router.get("/editprofile", (req, res) => {
-    res.render("editprofile.hbs"); 
+    res.render("editprofile.hbs");
 });
 
 module.exports = router;

@@ -3,7 +3,7 @@ const path = require('path');
 const dotenv = require("dotenv");
 const session = require('express-session');
 const { engine } = require('express-handlebars');
-
+const bodyParser = require('body-parser');
 const app = express();
 
 dotenv.config({ path: './.env' });
@@ -25,7 +25,7 @@ app.use(session({
     cookie: { secure: false } 
 }));
 
-
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const publicDirectory = path.join(__dirname, './public');
 
@@ -37,6 +37,13 @@ app.use(express.json());
 app.engine('handlebars', engine());
 app.set('view engine', 'hbs');
 
+app.get('/doctors', (req, res) => {
+  const query = 'SELECT ID , name FROM doctors';
+  connection.query(query, (err, results) => {
+    if (err) throw err;
+    res.render('doctors', { doctors: results });
+  });
+});
 //check db connexion
 /*
 db.connect((error) => {

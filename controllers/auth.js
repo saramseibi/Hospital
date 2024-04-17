@@ -217,6 +217,8 @@ const search = (req, res) => {
     });
 };
 // resrvation 
+
+/*
 const reservation = async (req, res, next) => {
     try {
         const { username, age, date, time, email } = req.body;
@@ -301,7 +303,8 @@ const reservation = async (req, res, next) => {
         console.error(error);
         next(error);
     }
-};
+};*/
+
 // edit profile 
 
 
@@ -318,6 +321,7 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
+
 router.post('/editprofile', upload.single('fileToUpload'), async (req, res) => {
     const { name, password, cpassword } = req.body;
     const user_id = req.session.userId;
@@ -357,38 +361,6 @@ router.post('/editprofile', upload.single('fileToUpload'), async (req, res) => {
     }
    
 });
-/*
-const search = (req, res) => {
-    let query = 'SELECT * FROM searchp';
-    let values = [];
-    const name = req.query.name;
- 
-    if (name) {
-        query += ' WHERE LOWER(name) LIKE LOWER(?)';
-        values = [`%${name}%`];
-    }
- 
-    db.query(query, values, (error, doctors) => {
-        if (error) {
-            console.error(error);
-            return res.status(500).send('An internal server error occurred');
-        }
- 
-        const message = name && doctors.length === 0 ? 'No search results found' : '';
-       return res.render('patientacount.hbs', { searchp: doctors, message: message });
-    });
-};*//*
-const logout= (req, res) => {
-    req.logout();
-  if (!req.session) {
-    req.session.destroy(function(_err) {
-      res.redirect('accuiel');
-    });
-  }
-  else {
-    res.redirect('/Plogin');
-  }
-  };
-  */
 
-module.exports = { login, signin, forgetPassword, resetpassword, search, reservation,upload, router };
+
+module.exports = { login, signin, forgetPassword, resetpassword, search, upload, router };
