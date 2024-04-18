@@ -59,13 +59,17 @@ ul {
 
 a {
     position: relative;
-    width: 280px;
+    width: 240px;
     font-size: 14px;
     color: rgb(85, 83, 83);
     display: table;
     padding: 10px;
+    
 }
-
+.style{
+    text-decoration: none;
+    width: auto;
+}
 nav .fas {
     position: relative;
     width: 70px;

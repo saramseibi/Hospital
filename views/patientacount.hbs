@@ -52,7 +52,7 @@
             <div class="nav-bar">
                 <h1 class="nav-title">Our doctor</h1>
                 <form action="/auth/search" method="get" class="search-form">
-                    <input type="search" name="name" placeholder="Search doctors...">
+                    <input type="search" name="name" placeholder="Search doctor...">
                     <button type="submit"><i class="fa fa-search"></i></button>
                     <a href="javascript:void(0)" id="clear-btn">Clear</a>
                 </form>
@@ -151,7 +151,7 @@
                     <table class="tr">
                         <thead>
                             <tr>
-
+                                <th>ID</th>
                                 <th>Name</th>
                                 <th>Depart</th>
                                 <th>Days</th>
@@ -182,11 +182,15 @@
                       
                         <tbody>
 
-                            {{#each doctors }}
+                            {{#each doctor }}
                             <tr>
                                 <td>{{this.ID}}</td>
                                 <td>{{this.name}}</td>
                                 <td>{{this.specialization}}</td>
+                                <td>{{this.days}}</td>
+                                <td>{{this.join_time}}</td>
+                                <td>{{this.logout_time}}</td>
+                                <td ><a href="/reservation/{{this.ID}}"  class="style"> reservation </a></td>
 
                             </tr>
                             {{/each}}

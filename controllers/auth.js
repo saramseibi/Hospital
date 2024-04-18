@@ -217,27 +217,126 @@ const search = (req, res) => {
     });
 };
 // resrvation 
+router.param('doctorId', (req, res, next, id) => {
+    console.log(`Doctor ID is: ${id}`);
+    const sql = 'SELECT * FROM doctor WHERE ID = ?';
+    db.query(sql, [id], (err, results) => {
+        if (err) {
+            return next(err);
+        }
+        if (results.length > 0) {
+            req.doctorId = id;
+            next();
+        } else {
+            return next(new Error('Doctor not found'));
+        }
+    });
+});
+const reservation = async (req, res, next) => {
 
+    const doctorId = req.params.doctorId;
+    try {
+        const { username, age, day, time, email } = req.body;
+        const sql = 'SELECT name, specialization, days, join_time, logout_time FROM doctor WHERE ID = ?';
+
+        
+        const [doctorDetails] = await db.promise().query(sql, [doctorId]);
+        console.log("Doctor details:", doctorDetails);
+        const doctor = doctorDetails[0]; 
+       
+        const appointmentDateTime = new Date(`${day}T${time}`);
+        const now = new Date();
+        now.setHours(0, 0, 0, 0);
+
+        if (appointmentDateTime < now) {
+            return res.render('reservation.hbs', {
+                message: "The appointment time can't have past already. Please select another day."
+            });
+        }
+
+        const appointmentHour = appointmentDateTime.getHours();
+        if (appointmentHour < doctor.join_time|| appointmentHour >= doctor.logout_time ) {
+            return res.render('reservation.hbs', {
+                message: 'Appointments must fall between 8 a.m. and 4 p.m. Please select another time.'
+            });
+        }
+
+        const [timeSlotTaken] = await db.promise().query(
+            `SELECT COUNT(*) AS count FROM appointments WHERE day = ? AND time = ?`,
+            [day, time]
+        );
+
+        if (timeSlotTaken[0].count > 0) {
+            return res.render('reservation.hbs', {
+                message: 'This time slot has already been taken. Please select another time.'
+            });
+        }
+
+        const [dailyLimitReached] = await db.promise().query(
+            `SELECT COUNT(*) AS count FROM appointments WHERE day = ?`,
+            [day]
+        );
+
+        if (dailyLimitReached[0].count >= 8) {
+            return res.render('reservation.hbs', {
+                message: 'The daily maximum of eight patients has been achieved. Please select another day.'
+            });
+        }
+
+        const [queryResult] = await db.promise().query(
+            `SELECT user_id FROM patient WHERE name = ?`, [username]
+        );
+
+        let user_id = null;
+        if (queryResult.length > 0) {
+            user_id = queryResult[0].user_id;
+        }
+
+        const appointmentData = {
+            name: username,
+            email: email,
+            age: age,
+            day: day,
+            time: time,
+            doctorname: req.doctorname,
+            patient_id: user_id,
+        };
+
+        db.query('INSERT INTO appointments SET ?', appointmentData, (error, results) => {
+            if (error) {
+                return res.render('reservation.hbs', {
+                    message: 'An error occurred'
+                });
+            }
+            return res.render('reservation.hbs', {
+                message: 'Your appointment has been successfully booked.'
+            });
+        });
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+}
 /*
 const reservation = async (req, res, next) => {
     try {
-        const { username, age, date, time, email } = req.body;
+        const { username, age, day, time, email } = req.body;
 
 
-        const appointmentDateTime = new Date(`${date}T${time}`);
+        const appointmentDateTime = new Date(`${day}T${time}`);
         const now = new Date();
         now.setHours(0, 0, 0, 0);
 
 
         if (appointmentDateTime < now) {
-            return res.render('reservationsam.hbs', {
+            return res.render('reservation.hbs', {
                 message: "The appointment time can't have past already. Please select another day."
             });
         }
 
         const appointmentHour = appointmentDateTime.getHours();
         if (appointmentHour < 8 || appointmentHour >= 15) {
-            return res.render('reservationsam.hbs', {
+            return res.render('reservation.hbs', {
                 message: 'Appointments must fall between 8 a.m. and 4 p.m. Please select another time.'
             });
         }
@@ -245,13 +344,13 @@ const reservation = async (req, res, next) => {
 
         const [timeSlotTaken] = await db.promise().query(
             `SELECT COUNT(*) AS count
-             FROM samdavid
-             WHERE date = ? AND time = ?`,
-            [date, time]
+             FROM appointments
+             WHERE day = ? AND time = ?`,
+            [day, time]
         );
 
         if (timeSlotTaken[0].count > 0) {
-            return res.render('reservationsam.hbs', {
+            return res.render('reservation.hbs', {
                 message: 'This time slot has already been taken. Please select another time.'
             });
         }
@@ -259,13 +358,13 @@ const reservation = async (req, res, next) => {
 
         const [dailyLimitReached] = await db.promise().query(
             `SELECT COUNT(*) AS count
-             FROM samdavid
-             WHERE date = ?`,
-            [date]
+             FROM appointments
+             WHERE day = ?`,
+            [day]
         );
 
         if (dailyLimitReached[0].count >= 4) {
-            return res.render('reservationsam.hbs', {
+            return res.render('reservation.hbs', {
                 message: 'The daily maximum of eight patients has been achieved. Please select another day.'
             });
         }
@@ -281,20 +380,20 @@ const reservation = async (req, res, next) => {
             name: username,
             email: email,
             age: age,
-            date: date,
+            day: day,
             time: time,
             doctorname: 'sam david',
             patient_id: user_id,
         };
 
-        db.query('INSERT INTO samdavid SET ?', appointmentData, (error, results) => {
+        db.query('INSERT INTO appointments SET ?', appointmentData, (error, results) => {
             if (error) {
-                return res.render('reservationsam.hbs', {
+                return res.render('reservation.hbs', {
                     message: 'An error occurred'
                 });
             }
 
-            return res.render('reservationsam.hbs', {
+            return res.render('reservation.hbs', {
                 message: 'Your appointment has been successfully booked.'
             });
 
@@ -325,7 +424,7 @@ const upload = multer({ storage: storage });
 router.post('/editprofile', upload.single('fileToUpload'), async (req, res) => {
     const { name, password, cpassword } = req.body;
     const user_id = req.session.userId;
-    
+
     const file = req.file;
     console.log(req.file)
 
@@ -342,12 +441,12 @@ router.post('/editprofile', upload.single('fileToUpload'), async (req, res) => {
         let filepath = file ? file.path : null;
         if (filepath) {
             await db.promise().query('UPDATE patient SET name = ?, password = ?, image = ? WHERE user_id = ?', [name, hashedPassword, userProfileImagePath, user_id]);
-            
-        } 
+
+        }
 
         const [results] = await db.promise().query('SELECT name, image FROM patient WHERE user_id = ?', [user_id]);
-        const { name:username, image:userProfileImage } = results[0];
-       
+        const { name: username, image: userProfileImage } = results[0];
+
 
         return res.render('patientacount', {
             message: "Profile updated successfully!",
@@ -359,8 +458,8 @@ router.post('/editprofile', upload.single('fileToUpload'), async (req, res) => {
         console.error(err);
         return res.render('editprofile', { message: "An error occurred" });
     }
-   
+
 });
 
 
-module.exports = { login, signin, forgetPassword, resetpassword, search, upload, router };
+module.exports = { login, signin, forgetPassword, resetpassword, search, upload, reservation, router };

@@ -37,11 +37,11 @@ app.use(express.json());
 app.engine('handlebars', engine());
 app.set('view engine', 'hbs');
 
-app.get('/doctors', (req, res) => {
-  const query = 'SELECT ID , name FROM doctors';
+app.get('/doctor', (req, res) => {
+  const query = 'SELECT ID , name FROM doctor';
   connection.query(query, (err, results) => {
     if (err) throw err;
-    res.render('doctors', { doctors: results });
+    res.render('doctor', { doctor: results });
   });
 });
 //check db connexion

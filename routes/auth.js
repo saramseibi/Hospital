@@ -10,7 +10,7 @@ router.post("/signin",authController.signin);
 router.post("/forget-password",authController.forgetPassword);
 router.post("/resetpassword",authController.resetpassword);
 router.get("/search",authController.search);
-//router.post("/reservation",authController.reservation);
+router.post("/reservation/:doctorId",authController.reservation);
 //router.post('/editprofile', upload.single('fileToUpload'), authController.editprofile);
 
 module.exports = router;

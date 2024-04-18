@@ -12,8 +12,9 @@
     <div class="container" >
         
         <div class="form-container book-container">
-            <form action="/auth/reservation" method="post">
+            <form action="/auth/reservation/{{doctorId}}" method="post">
                 <h1 class="title">make an appointment</h1>
+                <input type="hidden" name="doctorId" value="{{doctorId}}">
                 <input type="text" name="username" placeholder="username" />
                 <input type="email" name="email" placeholder="email" />
                 <input type="number" name="age" placeholder="age"/>
@@ -32,7 +33,7 @@
                 <div class="overlay-panel overlay-right">
                    
                     <img src="/img/bearded-doctor-glasses.jpg" >
-                     <h1 class="title">Welcome!</h1>
+                     <h1 class="title"></h1>
                     <p>Enter your personal details and start journey with us</p>
                     <button class="btn"><a href="/patientacount">return</a></button>
                 </div>

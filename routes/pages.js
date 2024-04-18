@@ -45,19 +45,22 @@ router.get("/patientacount", (req, res) => {
     if (!req.session.name) {
         return res.redirect('/Plogin');
     }
-    var sql = 'SELECT ID, name, specialization FROM doctors';
+    var sql = 'SELECT ID, name, specialization ,days ,join_time,logout_time FROM doctor';
     db.query(sql, function (error, results) {
         if (error) {
             return next(error);
         }
 
         if (results.length > 0) {
+            req.session.doctorid = results[0].ID;
+            req.session.doctorname = results[0].name;
+            req.session.save();
             console.log(`Session Name: ${req.session.name}`);
             console.log(`Session id: ${req.session.userId}`);
             console.log(`Session image: ${req.session.image}`);
             console.log(results);
             res.render('patientacount.hbs', {
-                doctors: results,
+                doctor: results,
                 username: req.session.name,
                 userProfileImage: req.session.image
             });
@@ -70,9 +73,11 @@ router.get("/patientacount", (req, res) => {
         }
     });
 });
-router.get("/reservationsam", (req, res) => {
-
-    res.render("reservationsam.hbs");
+router.get("/reservation/:doctorId", (req, res) => {
+    const doctorId = req.params.doctorId;
+    res.render("reservation.hbs", {
+        doctorId:doctorId
+    });
 });
 router.get("/doctoraccount", (req, res) => {
     res.render("doctoraccount.hbs");
