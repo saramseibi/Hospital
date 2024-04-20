@@ -87,7 +87,7 @@ const signin = async (req, res, next) => {
         }
 
 
-        let [userResults] = await db.promise().query('SELECT user_id, name, image, password, confirmed FROM patient WHERE name = ? AND confirmed = 1', [Username]);
+        let [userResults] = await db.promise().query('SELECT user_id, name, image, password, confirmed , email  FROM patient WHERE name = ? AND confirmed = 1', [Username]);
         if (userResults.length === 0) {
             return res.render('Plogin', { message: 'Email has not been confirmed yet' });
         }
@@ -102,6 +102,7 @@ const signin = async (req, res, next) => {
             req.session.name = user.name;
             req.session.userId = user.user_id;
             req.session.image = user.image;
+            req.session.email = user.email; 
             return res.redirect('/patientacount');
         }
     } catch (error) {
@@ -237,13 +238,21 @@ const reservation = async (req, res, next) => {
     const doctorId = req.params.doctorId;
     try {
         const { username, age, day, time, email } = req.body;
+        
+        if ( req.session.name!== username  || req.session.email !== email) {
+            console.log (req.session.name);
+            console.log(req.session.email);
+            return res.render('reservation.hbs', {
+                message: "The provided details do not match the logged-in user's information."
+            });
+        }
         const sql = 'SELECT name, specialization, days, join_time, logout_time FROM doctor WHERE ID = ?';
 
-        
+
         const [doctorDetails] = await db.promise().query(sql, [doctorId]);
         console.log("Doctor details:", doctorDetails);
-        const doctor = doctorDetails[0]; 
-       
+        const doctor = doctorDetails[0];
+
         const appointmentDateTime = new Date(`${day}T${time}`);
         const now = new Date();
         now.setHours(0, 0, 0, 0);
@@ -255,15 +264,17 @@ const reservation = async (req, res, next) => {
         }
 
         const appointmentHour = appointmentDateTime.getHours();
-        if (appointmentHour < doctor.join_time|| appointmentHour >= doctor.logout_time ) {
+        const doctorJoinHour = parseInt(doctor.join_time.split(':')[0]); 
+        const doctorLogoutHour = parseInt(doctor.logout_time.split(':')[0]);
+        if (appointmentHour < doctorJoinHour|| appointmentHour >= doctorLogoutHour) {
             return res.render('reservation.hbs', {
                 message: 'Appointments must fall between 8 a.m. and 4 p.m. Please select another time.'
             });
         }
 
         const [timeSlotTaken] = await db.promise().query(
-            `SELECT COUNT(*) AS count FROM appointments WHERE day = ? AND time = ?`,
-            [day, time]
+            `SELECT COUNT(*) AS count FROM appointments WHERE day = ? AND time = ? AND doctor_id = ?`,
+            [day, time, doctorId] 
         );
 
         if (timeSlotTaken[0].count > 0) {
@@ -273,8 +284,8 @@ const reservation = async (req, res, next) => {
         }
 
         const [dailyLimitReached] = await db.promise().query(
-            `SELECT COUNT(*) AS count FROM appointments WHERE day = ?`,
-            [day]
+            `SELECT COUNT(*) AS count FROM appointments WHERE day = ? AND doctor_id = ?`,
+            [day, doctorId] 
         );
 
         if (dailyLimitReached[0].count >= 8) {
@@ -283,27 +294,35 @@ const reservation = async (req, res, next) => {
             });
         }
 
-        const [queryResult] = await db.promise().query(
-            `SELECT user_id FROM patient WHERE name = ?`, [username]
+       /* const [queryResult] = await db.promise().query(
+            `SELECT user_id  FROM patient WHERE name = ?`, [username]
         );
 
         let user_id = null;
         if (queryResult.length > 0) {
             user_id = queryResult[0].user_id;
-        }
+        }else {
+            return res.render('reservation.hbs', {
+                message: 'Patient not found.'
+            });
+        }*/
 
         const appointmentData = {
+
             name: username,
             email: email,
             age: age,
             day: day,
             time: time,
-            doctorname: req.doctorname,
-            patient_id: user_id,
+            doctor_name: doctor.name, 
+            doctor_id: doctorId,
+            patient_id: req.session.userId,
         };
+
 
         db.query('INSERT INTO appointments SET ?', appointmentData, (error, results) => {
             if (error) {
+                console.error('Database insertion error:', error);
                 return res.render('reservation.hbs', {
                     message: 'An error occurred'
                 });
@@ -313,6 +332,7 @@ const reservation = async (req, res, next) => {
             });
         });
     } catch (error) {
+        console.error('Server error:', error);
         console.error(error);
         next(error);
     }
