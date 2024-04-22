@@ -70,7 +70,7 @@ async function sendEmails(to, subject, token) {
         console.log(info);
     } catch (err) {
         console.log(err);
-        throw err; // Rethrow or handle error appropriately
+        throw err;
     }
 }
 
@@ -102,7 +102,7 @@ const signin = async (req, res, next) => {
             req.session.name = user.name;
             req.session.userId = user.user_id;
             req.session.image = user.image;
-            req.session.email = user.email; 
+            req.session.email = user.email;
             return res.redirect('/patientacount');
         }
     } catch (error) {
@@ -238,9 +238,9 @@ const reservation = async (req, res, next) => {
     const doctorId = req.params.doctorId;
     try {
         const { username, age, day, time, email } = req.body;
-        
-        if ( req.session.name!== username  || req.session.email !== email) {
-            console.log (req.session.name);
+
+        if (req.session.name !== username || req.session.email !== email) {
+            console.log(req.session.name);
             console.log(req.session.email);
             return res.render('reservation.hbs', {
                 message: "The provided details do not match the logged-in user's information."
@@ -264,9 +264,9 @@ const reservation = async (req, res, next) => {
         }
 
         const appointmentHour = appointmentDateTime.getHours();
-        const doctorJoinHour = parseInt(doctor.join_time.split(':')[0]); 
+        const doctorJoinHour = parseInt(doctor.join_time.split(':')[0]);
         const doctorLogoutHour = parseInt(doctor.logout_time.split(':')[0]);
-        if (appointmentHour < doctorJoinHour|| appointmentHour >= doctorLogoutHour) {
+        if (appointmentHour < doctorJoinHour || appointmentHour >= doctorLogoutHour) {
             return res.render('reservation.hbs', {
                 message: 'Appointments must fall between 8 a.m. and 4 p.m. Please select another time.'
             });
@@ -274,7 +274,7 @@ const reservation = async (req, res, next) => {
 
         const [timeSlotTaken] = await db.promise().query(
             `SELECT COUNT(*) AS count FROM appointments WHERE day = ? AND time = ? AND doctor_id = ?`,
-            [day, time, doctorId] 
+            [day, time, doctorId]
         );
 
         if (timeSlotTaken[0].count > 0) {
@@ -285,7 +285,7 @@ const reservation = async (req, res, next) => {
 
         const [dailyLimitReached] = await db.promise().query(
             `SELECT COUNT(*) AS count FROM appointments WHERE day = ? AND doctor_id = ?`,
-            [day, doctorId] 
+            [day, doctorId]
         );
 
         if (dailyLimitReached[0].count >= 8) {
@@ -293,18 +293,14 @@ const reservation = async (req, res, next) => {
                 message: 'The daily maximum of eight patients has been achieved. Please select another day.'
             });
         }
-
-       /* const [queryResult] = await db.promise().query(
-            `SELECT user_id  FROM patient WHERE name = ?`, [username]
+        /*
+        const [queryResult] = await db.promise().query(
+            `SELECT token  FROM patient WHERE name = ?`, [username]
         );
 
-        let user_id = null;
         if (queryResult.length > 0) {
-            user_id = queryResult[0].user_id;
-        }else {
-            return res.render('reservation.hbs', {
-                message: 'Patient not found.'
-            });
+            token = queryResult[0].token;
+            console.log("Token:", token);
         }*/
 
         const appointmentData = {
@@ -314,27 +310,89 @@ const reservation = async (req, res, next) => {
             age: age,
             day: day,
             time: time,
-            doctor_name: doctor.name, 
+            doctor_name: doctor.name,
             doctor_id: doctorId,
             patient_id: req.session.userId,
         };
 
 
-        db.query('INSERT INTO appointments SET ?', appointmentData, (error, results) => {
+        db.query('INSERT INTO appointments SET ?', appointmentData, async (error, results) => {
             if (error) {
                 console.error('Database insertion error:', error);
                 return res.render('reservation.hbs', {
-                    message: 'An error occurred'
+                    message: 'An error occurred during saving the appointment.'
                 });
             }
-            return res.render('reservation.hbs', {
-                message: 'Your appointment has been successfully booked.'
-            });
+            try {
+                await sendreservation(email, username, day, time, doctor, 'Appointment Information');
+                return res.render('reservation.hbs', {
+                    message: 'Your appointment has been successfully booked. Check your email.'
+                });
+            } catch (sendError) {
+                console.error('Email sending error:', sendError);
+                return res.render('reservation.hbs', {
+                    message: 'Appointment booked, but failed to send  email.'
+                });
+            }
         });
+
     } catch (error) {
         console.error('Server error:', error);
-        console.error(error);
         next(error);
+    }
+}
+async function sendreservation(to, username, day, time, doctor, subject) {
+    try {
+        const transporter = nodemailer.createTransport({
+            service: "Gmail",
+            host: "smtp.gmail.com",
+            port: 465,
+            secure: true,
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
+            }
+        });
+
+        const mailOptions = {
+            to: to,
+            subject: subject,
+            text: `Dear ${username},
+
+            This email serves as a reminder of your scheduled visit to Curahope on ${day} at  ${time} with Dr. ${doctor.name}. 
+
+
+            Please note:
+            - Arrival: We request that you arrive fifteen minutes prior to your scheduled appointment time to complete any necessary paperwork, especially if you are a new patient.
+            - Cancellations: If you need to cancel or reschedule your appointment, please contact us at least 24 hours in advance.
+            
+            We look forward to assisting you with your healthcare needs.
+            
+            Warm regards,
+            
+            The Curahope Team`,
+            html: `<p>Dear ${username},</p>
+
+            <p> This email serves as a reminder of your scheduled visit to Curahope on ${day} at  ${time} with Dr. ${doctor.name}. </p>
+
+
+            <p><strong>Please note:</strong></p>
+            <ul>
+              <li><strong>Arrival:</strong> We request that you arrive fifteen minutes prior to your scheduled appointment time to complete any necessary paperwork, especially if you are a new patient.</li>
+              <li><strong>Cancellations:</strong> If you need to cancel or reschedule your appointment, please contact us at least 24 hours in advance.</li>
+            </ul>
+            
+            <p>We look forward to assisting you with your healthcare needs.</p>
+            
+            <p>Warm regards,</p>
+            <p>The Curahope Team</p>`
+        };
+
+        let info = await transporter.sendMail(mailOptions);
+        console.log(info);
+    } catch (err) {
+        console.log(err);
+        throw err;
     }
 }
 /*

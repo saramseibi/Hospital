@@ -5,53 +5,45 @@
     <head>
         <!-- Font Awesome Cdn Link -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
-        <link rel="stylesheet" href="/dacount.css" />
+        <link rel="stylesheet" href="/acount.css" />
         <title>CURAHOPE</title>
         <link rel="icon" type="image/svg" href="/img/doctor-svgrepo-com.svg">
     </head>
 
     <body>
-        <div class="container">
-            <nav>
-                <div class="navbar">
-                    <div class="logo">
-                        <img src=" " alt="">
-                        <h1> </h1>
-                    </div>
-                    <ul>
-                        <li><a href="#">
-                                <i class="fas fa-user"></i>
-                                <span class="nav-item"> </span>
-                            </a>
-                        </li>
+         <div class="contner">
+        <nav>
+            <ul>
+                <li><a href="#" class="logo">
+                        <img src="{{ userProfileImage }}">
+                        <span class="item">{{username}}</span>
+                    </a></li>
 
+                <li><a href="#" class="decoration">
+                        <i class="fas fa-thisbase"></i>
+                        <span class="item"> </span>
+                    </a></li>
+                <li><a href="/editprofile" class="decoration">
+                        <i class="fas fa-user"></i>
+                        <span class="item">EditProfile</span>
+                    </a></li>
 
-                        <li><a href="#">
-                                <i class="fab fa-dochub"></i>
-                                <span class="nav-item">Documnents</span>
-                            </a>
-                        </li>
-                        <li><a href="#">
-                                <i class="fas fa-cog"></i>
-                                <span class="nav-item">Setting</span>
-                            </a>
-                        </li>
-                        <li><a href="#">
-                                <i class="fas fa-question-circle"></i>
-                                <span class="nav-item">Help</span>
-                            </a>
-                        </li>
-                        <li>
-                            <form action="/logout" method="POST" >
-                                <a class="logout"><button type="submit" >
-                                        <i class="fas fa-sign-out-alt"></i>
-                                        <span class="nav-item">Log out</span>
-                                    </button></a>
-                            </form>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
+                <li>
+                <li><a href="#" class="decoration">
+                        <i class="fas fa-question-circle"></i>
+                        <span class="item">Help</span>
+                    </a>
+                </li>
+                <form action="/logout" method="POST" class="log">
+                    <button type="submit" class="logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span class="item">Log out</span>
+                    </button>
+                </form>
+                </li>
+            </ul>
+        </nav>
+
 
             <section class="main">
                 <div class="main-body">

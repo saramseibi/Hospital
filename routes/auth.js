@@ -1,7 +1,8 @@
 const express = require('express');
 const authController =require ('../controllers/auth');
+const doctorController =require ('../controllers/doctor');
 const multer = require('multer');
-const upload = multer({ dest: 'public/uploads/' });
+//const upload = multer({ dest: 'public/uploads/' });
 const router = express.Router();
 
 
@@ -11,6 +12,6 @@ router.post("/forget-password",authController.forgetPassword);
 router.post("/resetpassword",authController.resetpassword);
 router.get("/search",authController.search);
 router.post("/reservation/:doctorId",authController.reservation);
-//router.post('/editprofile', upload.single('fileToUpload'), authController.editprofile);
+router.post("/doctorsignin",doctorController.signin);
 
 module.exports = router;

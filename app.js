@@ -37,13 +37,7 @@ app.use(express.json());
 app.engine('handlebars', engine());
 app.set('view engine', 'hbs');
 
-app.get('/doctor', (req, res) => {
-  const query = 'SELECT ID , name FROM doctor';
-  connection.query(query, (err, results) => {
-    if (err) throw err;
-    res.render('doctor', { doctor: results });
-  });
-});
+
 //check db connexion
 /*
 db.connect((error) => {
@@ -73,7 +67,10 @@ app.use('/', require('./routes/pages'));
 app.use('/auth', require('./routes/auth'));
 const f = require('./controllers/auth');
 app.use('/auth', f.router);
-
+const doctorRoutes = require('./controllers/doctor').router;
+app.use('/doctor', doctorRoutes);
+console.log(f.router);
+console.log(doctorRoutes);
 // server connexion
 app.listen(3007, () => {
     console.log("server connected");

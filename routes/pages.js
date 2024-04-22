@@ -65,7 +65,7 @@ router.get("/patientacount", (req, res) => {
                 userProfileImage: req.session.image
             });
         } else {
-        
+
             res.render('patientacount.hbs', {
                 username: req.session.name,
                 userProfileImage: req.session.image
@@ -76,18 +76,39 @@ router.get("/patientacount", (req, res) => {
 router.get("/reservation/:doctorId", (req, res) => {
     const doctorId = req.params.doctorId;
     res.render("reservation.hbs", {
-        doctorId:doctorId
+        doctorId: doctorId
     });
 });
-router.get("/doctoraccount", (req, res) => {
-    res.render("doctoraccount.hbs");
-})
+
 router.get("/signin", (req, res) => {
     res.render("Plogin");
 });
 
 router.get("/editprofile", (req, res) => {
     res.render("editprofile.hbs");
+});
+
+router.get("/doctorlogin", (req, res) => {
+    res.render("doctorlogin.hbs");
+});
+router.get("/doctorsignin", (req, res) => {
+    res.render("doctorlogin");
+});
+router.get("/doctoraccount", (req, res) => {
+    res.render("doctoraccount.hbs");
+});
+router.get("/doctoraccount", (req, res) => {
+    if (!req.session.daoctorname) {
+        return res.redirect('/Plogin');
+    } else {
+        console.log(`Session Name: ${req.session.daoctorname}`);
+        console.log(`Session id: ${req.session.doctorid}`);
+        console.log(`Session image: ${req.session.doctorimage}`);
+        res.render('doctoraccount.hbs', {
+            doctorname: req.session.daoctorname,
+            doctorProfileImage: req.session.doctorimage
+        });
+    }
 });
 
 module.exports = router;
