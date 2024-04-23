@@ -73,11 +73,25 @@ router.get("/patientacount", (req, res) => {
         }
     });
 });
-router.get("/reservation/:doctorId", (req, res) => {
-    const doctorId = req.params.doctorId;
-    res.render("reservation.hbs", {
-        doctorId: doctorId
-    });
+router.get("/reservation/:doctorId", async(req, res,next) => {
+    try {
+        const doctorId = req.params.doctorId;
+        let [userResults] = await db.promise().query('SELECT  name,image FROM doctor WHERE ID=? ', [doctorId]);
+        const user = userResults[0];
+        if (!user) {
+            res.status(404).send('Doctor not found');
+            return;
+        }
+        res.render("reservation.hbs", {
+            doctorId: doctorId,
+            doctorname: user.name,
+            doctorimage: user.image
+        });
+
+    } catch (error){
+            console.log(error);
+            next(error);
+    }
 });
 
 router.get("/signin", (req, res) => {
@@ -94,18 +108,16 @@ router.get("/doctorlogin", (req, res) => {
 router.get("/doctorsignin", (req, res) => {
     res.render("doctorlogin");
 });
+
 router.get("/doctoraccount", (req, res) => {
-    res.render("doctoraccount.hbs");
-});
-router.get("/doctoraccount", (req, res) => {
-    if (!req.session.daoctorname) {
+    if (!req.session.doctorname) {
         return res.redirect('/Plogin');
     } else {
-        console.log(`Session Name: ${req.session.daoctorname}`);
+        console.log(`Session Name: ${req.session.doctorname}`);
         console.log(`Session id: ${req.session.doctorid}`);
         console.log(`Session image: ${req.session.doctorimage}`);
         res.render('doctoraccount.hbs', {
-            doctorname: req.session.daoctorname,
+            doctorname: req.session.doctorname,
             doctorProfileImage: req.session.doctorimage
         });
     }

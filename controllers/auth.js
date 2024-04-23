@@ -103,6 +103,7 @@ const signin = async (req, res, next) => {
             req.session.userId = user.user_id;
             req.session.image = user.image;
             req.session.email = user.email;
+            req.session.save();
             return res.redirect('/patientacount');
         }
     } catch (error) {
@@ -202,8 +203,8 @@ const search = (req, res) => {
     const query = 'SELECT * FROM searchp WHERE LOWER(name) LIKE LOWER(?)';
     const values = [`%${name}%`];
 
-    console.log('Executing query:', query);
-    console.log('With values:', values);
+    //console.log('Executing query:', query);
+    //console.log('With values:', values);
     db.query(query, values, (error, results) => {
         if (error) {
             console.error(error);

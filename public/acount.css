@@ -70,7 +70,7 @@ a {
     text-decoration: none;
     width: auto;
 }
-nav .fas {
+nav .fas ,.fab {
     position: relative;
     width: 70px;
     height: 25px;
@@ -82,7 +82,7 @@ nav .fas {
     text-decoration: none !important;
     display: grid ;
     grid-template-rows: 1fr ;
-    grid-template-columns: repeat(2, 75px );
+    grid-template-columns: repeat(2, 60px );
     gap:  0 px !important;
     padding: 10px ;
 }
@@ -374,6 +374,8 @@ table thead tr {
     }
     .decoration{
         padding-left: 0 !important;
+        grid-template-columns: repeat(2, 46px );
+
     }
     .item{
         margin: 0;

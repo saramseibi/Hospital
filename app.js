@@ -69,8 +69,6 @@ const f = require('./controllers/auth');
 app.use('/auth', f.router);
 const doctorRoutes = require('./controllers/doctor').router;
 app.use('/doctor', doctorRoutes);
-console.log(f.router);
-console.log(doctorRoutes);
 // server connexion
 app.listen(3007, () => {
     console.log("server connected");

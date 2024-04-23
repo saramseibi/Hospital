@@ -1,45 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
     <link rel="stylesheet" href="/ajouter.css">
+
     <title>CURAHOPE</title>
     <link rel="icon" type="image/svg" href="/img/doctor-svgrepo-com.svg">
 </head>
+
 <body>
 
-    <div class="container" >
-        
+    <div class="container">
+
         <div class="form-container book-container">
             <form action="/auth/reservation/{{doctorId}}" method="post">
                 <h1 class="title">make an appointment</h1>
                 <input type="hidden" name="doctorId" value="{{doctorId}}">
                 <input type="text" name="username" placeholder="username" />
                 <input type="email" name="email" placeholder="email" />
-                <input type="number" name="age" placeholder="age"/>
+                <input type="number" name="age" placeholder="age" />
                 <input type="date" name="day" />
-                <input type="time" name="time"/>
+                <input type="time" name="time" />
                 <input type="submit" class="button" value="register" />
-                    {{#if message}}
-                    <h5 class="alert alert-danger mt-3">{{message}}</h5>
-                    {{/if}}
+                {{#if message}}
+                <h5 class="alert alert-danger mt-3">{{message}}</h5>
+                {{/if}}
             </form>
         </div>
         <div class="overlay-container">
             <div class="overlay">
-            
+
                 <div class="overlay-panel overlay-right">
-                   
-                    <img src="/img/bearded-doctor-glasses.jpg" >
-                     <h1 class="title"></h1>
+
+                    <img src="{{ doctorimage}}">
+                    <h1 class="title">{{doctorname}}</h1>
                     <p>Enter your personal details and start journey with us</p>
                     <button class="btn"><a href="/patientacount">return</a></button>
                 </div>
             </div>
         </div>
     </div>
-    
+
+
 
 </body>
+
 </html>
