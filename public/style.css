@@ -3,6 +3,7 @@
 
 body {
     background-color: #f8f8f8;
+    
 }
 
 .navbar {
@@ -12,7 +13,7 @@ body {
     border-radius: 16px;
 }
 
-.login-button,
+
 .btn {
     background-color: transparent;
     font-size: 14px;
@@ -51,6 +52,8 @@ body {
 .nav-link:hover,
 .nav-link.active {
     color: #000;
+    transition: 0.3s ease;
+    transform: scale(1.1);
 }
 
 @media (min-width :991px) {
@@ -504,7 +507,7 @@ textarea.input {
     background-color: #fff;
     border: 2px solid #fafafa;
     font-size: 0.95rem;
-    color: #1abc9c;
+    color: #1abc9c !important;
     line-height: 1;
     border-radius: 25px;
     outline: none;
@@ -515,10 +518,17 @@ textarea.input {
   
   .btn:hover {
     background-color: transparent  !important;
-    color: #fff;
+    color: #fff ;
     border: 2px solid #fafafa;
   }
-  
+  .btn-primary:hover{
+    border: 2px solid #1abc9c;
+    transition: 0.3s ease;
+    transform: scale(1.1);
+  }
+  .send:hover{
+    color: #fff !important;
+  }
 .contact-info {
     padding: 2.3rem 2.2rem;
     position: relative;

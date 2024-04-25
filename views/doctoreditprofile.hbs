@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="/edit.css">
+
+    <title>CURAHOPE</title>
+    <link rel="icon" type="image/svg" href="/img/doctor-svgrepo-com.svg">
+</head>
+
+<body>
+
+    <h1>Modifier Le Compte </h1>
+    <form enctype="multipart/form-data" action="/doctor/doctoreditprofile" method="post">
+        <label for="name">Nom d'utilisateur </label>
+        <input type="text" name="name"><br>
+
+        <label for="password">Nouveau Mot de passe</label>
+        <input type="password" name="password"><br>
+
+        <label for="cpassword">Nouveau Mot de passe</label>
+        <input type="password" name="cpassword"><br>
+
+        <div class="mb-3">
+            <label class="form-label">Image de profil</label>
+            <input type="file" class="form-control" name="fileToUpload">
+        </div>
+        <div class="Btn">
+            <input type="submit" name="submit" class="cc" value="Enregister">
+            <a href="/patientacount" class="link-secondary">Retouner</a>
+        </div>
+        {{#if message}}
+        <h4 class="alert alert-danger mt-4">{{message}}</h4>
+        {{/if}}
+    </form>
+
+</body>
+
+</html>

@@ -218,7 +218,10 @@ a:hover i {
     margin-top: 20px;
     text-transform: capitalize;
 }
-
+.reservation{
+    margin-top: 12%;
+    text-transform: capitalize;
+}
 .attendance-list {
     width: 100%;
     padding: 10px;

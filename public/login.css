@@ -90,12 +90,14 @@ form.sign-in-form {
 }
 
 .input-field input {
-  background: none;
+  background: transparent;
   outline: none;
   border: none;
   line-height: 1;
   font-weight: 600;
   font-size: 13px;
+  border-radius: 50%;
+  background-color: #f0f0f0 !important;
   color: #333;
 }
 

@@ -23,7 +23,7 @@ function smoothScroll(target) {
     if (element) {
         element.scrollIntoView({
             behavior: "smooth",
-            block: "start",
+            block: "center",
             inline: "nearest"
         });
     }

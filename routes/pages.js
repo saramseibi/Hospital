@@ -101,7 +101,7 @@ router.get("/signin", (req, res) => {
 router.get("/editprofile", (req, res) => {
     res.render("editprofile.hbs");
 });
-
+//doctor router
 router.get("/doctorlogin", (req, res) => {
     res.render("doctorlogin.hbs");
 });
@@ -111,7 +111,7 @@ router.get("/doctorsignin", (req, res) => {
 
 router.get("/doctoraccount", (req, res) => {
     if (!req.session.doctorname) {
-        return res.redirect('/Plogin');
+        return res.redirect('/doctorlogin');
     } else {
         console.log(`Session Name: ${req.session.doctorname}`);
         console.log(`Session id: ${req.session.doctorid}`);
@@ -122,5 +122,15 @@ router.get("/doctoraccount", (req, res) => {
         });
     }
 });
+router.get("/doctoreditprofile", (req, res) => {
+    res.render("doctoreditprofile");
+});
+router.get("/doctorforgetpassword", (req, res) => {
+    res.render("doctorforgetpassword.hbs");
+});
+router.get('/doctorresetpassword/:token', (req, res) => {
+    const token = req.params.token;
 
+    res.render('doctorresetpassword.hbs', { token });
+});
 module.exports = router;

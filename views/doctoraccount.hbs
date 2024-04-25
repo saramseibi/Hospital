@@ -1,72 +1,123 @@
-<span style="font-family: verdana, geneva, sans-serif;">
-    <!DOCTYPE html>
-    <html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 
-    <head>
-        <!-- Font Awesome Cdn Link -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
-        <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
-        <link rel="stylesheet" href="/acount.css" />
-        <title>CURAHOPE</title>
-        <link rel="icon" type="image/svg" href="/img/doctor-svgrepo-com.svg">
-    </head>
+<head>
+    <!-- Font Awesome Cdn Link -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+    <link rel="stylesheet" href="/acount.css" />
+    <title>CURAHOPE</title>
+    <link rel="icon" type="image/svg" href="img/doctor-svgrepo-com.svg">
+</head>
 
-    <body>
-        <div class="contner">
-            <nav>
-                <ul>
-                    <li><a href="#" class="logo">
-                            <img src="{{ doctorProfileImage}}">
-                            <span class="item">{{doctorname}}</span>
-                        </a></li>
+<body>
+    <div class="contner">
+        <nav>
+            <ul>
+                <li><a href="#" class="logo">
+                        <img src="{{ doctorProfileImage}}">
+                        <span class="item">{{doctorname}}</span>
+                    </a></li>
 
-                    <li><a href="#" class="decoration">
-                            <i class="fab fa-dochub"></i>
-                            <span class="item">Documnents</span>
-                        </a>
-                    </li>
-                    <li><a href="/editprofile" class="decoration">
-                            <i class="fas fa-user"></i>
-                            <span class="item">EditProfile</span>
-                        </a></li>
-
-
-                    <li><a href="#" class="decoration">
-                            <i class="fas fa-question-circle"></i>
-                            <span class="item">Help</span>
-                        </a>
-                    </li>
-                    <form action="/logout" method="POST" class="log">
-                        <button type="submit" class="logout">
-                            <i class="fas fa-sign-out-alt"></i>
-                            <span class="item">Log out</span>
-                        </button>
-                    </form>
-
-                </ul>
-            </nav>
+                <li><a href="#" class="decoration">
+                        <i class="fab fa-dochub"></i>
+                        <span class="item">Documnents</span>
+                    </a>
+                </li>
+                <li><a href="/doctoreditprofile" class="decoration">
+                        <i class="fas fa-user"></i>
+                        <span class="item">EditProfile</span>
+                    </a></li>
 
 
-            <section class="main">
-                <div class="main-body">
-                    <h1></h1>
+                <li><a href="#" class="decoration">
+                        <i class="fas fa-question-circle"></i>
+                        <span class="item">Help</span>
+                    </a>
+                </li>
+                <form action="/logout" method="POST" class="log">
+                    <button type="submit" class="logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span class="item">Log out</span>
+                    </button>
+                </form>
 
-                    <div class="search_bar">
-                        <input type="search" placeholder="Search  here...">
-
-                    </div>
+            </ul>
+        </nav>
 
 
+        <section class="main">
+            <div class="nav-bar">
+                <h1 class="nav-title">Our doctor</h1>
+                <form action="/auth/search" method="get" class="search-form">
+                    <input type="search" name="name" placeholder="Search doctor...">
+                    <button type="submit"><i class="fa fa-search"></i></button>
+                    <!--<a href="javascript:void(0)" id="clear-btn">Clear</a>-->
+                </form>
+            </div>
+            <section class="reservation">
+                <div class="attendance-list">
+                    <h1>Attendance List</h1>
+                    <table class="tr">
+                        <thead>
+                            <tr>
+                                
+                                <th>Name</th>
+                                <th>Age</th>
+                                <th>Day</th>
+                                <th>Time</th>
+                                
+                            </tr>
+
+                        </thead>
+                        <tbody>
+
+                            {{#if searchp.length}}
+                            {{#each searchp}}
+                            <tr>
+                                <td>{{this.name}}</td>
+                                <td>{{this.depart}}</td>
+                                <td>{{this.days}}</td>
+                                <td>{{this.jointime}}</td>
+                            
+                                <td></td>
+
+                            </tr>
+                            {{/each}}
+                            {{else}}
+
+                            {{/if}}
+                        </tbody>
+
+                        <tbody>
+
+                            {{#each doctor }}
+                            <tr>
+                                <td>{{this.ID}}</td>
+                                <td>{{this.name}}</td>
+                                <td>{{this.specialization}}</td>
+                                <td>{{this.days}}</td>
+                                
+
+                            </tr>
+                            {{/each}}
 
 
+                        </tbody>
 
-
-
+                    </table>
                 </div>
             </section>
-        </div>
+        </section>
 
-    </body>
 
-    </html>
-</span>
+
+
+
+    </div>
+    </section>
+    </div>
+
+</body>
+
+</html>

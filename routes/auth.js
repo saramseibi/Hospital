@@ -12,6 +12,9 @@ router.post("/forget-password",authController.forgetPassword);
 router.post("/resetpassword",authController.resetpassword);
 router.get("/search",authController.search);
 router.post("/reservation/:doctorId",authController.reservation);
-router.post("/doctorsignin",doctorController.signin);
+//doctor router
 
+router.post("/doctorsignin",doctorController.signin);
+router.post("/doctorforgetpassword",doctorController.forget);
+router.post("/doctorresetpassword",doctorController.reset );
 module.exports = router;
