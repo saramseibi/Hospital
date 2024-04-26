@@ -186,7 +186,7 @@ const resetpassword = async (req, res) => {
         console.log(token);
         const updateQuery = 'UPDATE patient SET password = ? WHERE token = ?';
         db.query(updateQuery, [hashedPassword, token]);
-        //await con.promise().query('UPDATE patient SET password = ? WHERE token = ?', [hashedPassword, token]);
+        //await db.promise().query('UPDATE patient SET password = ? WHERE token = ?', [hashedPassword, token]);
 
         return res.render('Plogin.hbs', { token, message: 'Password reset successful' });
 
@@ -212,12 +212,17 @@ const search = (req, res) => {
         }
 
         if (results.length > 0) {
-            return res.render('patientacount.hbs', { searchp: results });
+            return res.render('patientacount.hbs', {
+                searchp: results, username: req.session.name,
+                userProfileImage: req.session.image
+                
+            });
         } else {
             return res.render('patientacount.hbs', { searchp: [], message: 'No search results found' });
         }
     });
 };
+//
 // resrvation 
 router.param('doctorId', (req, res, next, id) => {
     console.log(`Doctor ID is: ${id}`);
@@ -234,6 +239,10 @@ router.param('doctorId', (req, res, next, id) => {
         }
     });
 });
+function getDayCode(dateString) {
+    const date = new Date(dateString);
+    return date.getDay() || 7;
+}
 const reservation = async (req, res, next) => {
 
     const doctorId = req.params.doctorId;
@@ -241,18 +250,25 @@ const reservation = async (req, res, next) => {
         const { username, age, day, time, email } = req.body;
 
         if (req.session.name !== username || req.session.email !== email) {
-            console.log(req.session.name);
-            console.log(req.session.email);
             return res.render('reservation.hbs', {
-                message: "The provided details do not match the logged-in user's information."
+                message: "The provided details do not match the logged-in user's information.",
+                doctorname: req.session.doctor.name,
+                doctorimage: req.session.doctor.image  
             });
         }
+
         const sql = 'SELECT name, specialization, days, join_time, logout_time FROM doctor WHERE ID = ?';
-
-
         const [doctorDetails] = await db.promise().query(sql, [doctorId]);
-        console.log("Doctor details:", doctorDetails);
         const doctor = doctorDetails[0];
+
+        const dayCode = getDayCode(day).toString();
+        if (!doctor.days.includes(dayCode)) {
+            return res.render('reservation.hbs', {
+                message: `Doctor does not work on the requested day (${day}). Please choose another day.`,
+                doctorname: req.session.doctor.name,
+                doctorimage: req.session.doctor.image
+            });
+        }
 
         const appointmentDateTime = new Date(`${day}T${time}`);
         const now = new Date();
@@ -260,16 +276,21 @@ const reservation = async (req, res, next) => {
 
         if (appointmentDateTime < now) {
             return res.render('reservation.hbs', {
-                message: "The appointment time can't have past already. Please select another day."
+                message: "The appointment time can't have past already. Please select another day.",
+                doctorname: req.session.doctor.name,
+                doctorimage: req.session.doctor.image
             });
         }
 
         const appointmentHour = appointmentDateTime.getHours();
         const doctorJoinHour = parseInt(doctor.join_time.split(':')[0]);
         const doctorLogoutHour = parseInt(doctor.logout_time.split(':')[0]);
+
         if (appointmentHour < doctorJoinHour || appointmentHour >= doctorLogoutHour) {
             return res.render('reservation.hbs', {
-                message: 'Appointments must fall between 8 a.m. and 4 p.m. Please select another time.'
+                message: `Appointments must fall between ${doctor.join_time} and ${doctor.logout_time}. Please select another time.`,
+                doctorname: req.session.doctor.name,
+                doctorimage: req.session.doctor.image
             });
         }
 
@@ -280,7 +301,9 @@ const reservation = async (req, res, next) => {
 
         if (timeSlotTaken[0].count > 0) {
             return res.render('reservation.hbs', {
-                message: 'This time slot has already been taken. Please select another time.'
+                message: 'This time slot has already been taken. Please select another time.',
+                doctorname: req.session.doctor.name,
+                doctorimage: req.session.doctor.image
             });
         }
 
@@ -291,7 +314,9 @@ const reservation = async (req, res, next) => {
 
         if (dailyLimitReached[0].count >= 8) {
             return res.render('reservation.hbs', {
-                message: 'The daily maximum of eight patients has been achieved. Please select another day.'
+                message: 'The daily maximum of eight patients has been reached. Please select another day.',
+                doctorname: req.session.doctor.name,
+                doctorimage: req.session.doctor.image
             });
         }
         /*
@@ -327,12 +352,16 @@ const reservation = async (req, res, next) => {
             try {
                 await sendreservation(email, username, day, time, doctor, 'Appointment Information');
                 return res.render('reservation.hbs', {
-                    message: 'Your appointment has been successfully booked. Check your email.'
+                    message: 'Your appointment has been successfully booked. Check your email.',
+                    doctorname: req.session.doctor.name,
+                    doctorimage: req.session.doctor.image
                 });
             } catch (sendError) {
                 console.error('Email sending error:', sendError);
                 return res.render('reservation.hbs', {
-                    message: 'Appointment booked, but failed to send  email.'
+                    message: 'Appointment booked, but failed to send  email.',
+                    doctorname: req.session.doctor.name,
+                    doctorimage: req.session.doctor.image
                 });
             }
         });

@@ -48,39 +48,35 @@
 
         <section class="main">
             <div class="nav-bar">
-                <h1 class="nav-title">Our doctor</h1>
-                <form action="/auth/search" method="get" class="search-form">
-                    <input type="search" name="name" placeholder="Search doctor...">
+                <h1 class="nav-title">Today's Appointments</h1>
+                <form action="/auth/doctorsearch" method="get" class="search-form">
+                    <input type="search" name="name" placeholder="Search ...">
                     <button type="submit"><i class="fa fa-search"></i></button>
                     <!--<a href="javascript:void(0)" id="clear-btn">Clear</a>-->
                 </form>
             </div>
-            <section class="reservation">
+            <section class="reservation ">
                 <div class="attendance-list">
                     <h1>Attendance List</h1>
                     <table class="tr">
                         <thead>
                             <tr>
-                                
+
                                 <th>Name</th>
-                                <th>Age</th>
                                 <th>Day</th>
                                 <th>Time</th>
-                                
+
                             </tr>
 
                         </thead>
                         <tbody>
 
-                            {{#if searchp.length}}
-                            {{#each searchp}}
+                            {{#if appointments.length}}
+                            {{#each appointments}}
                             <tr>
                                 <td>{{this.name}}</td>
-                                <td>{{this.depart}}</td>
-                                <td>{{this.days}}</td>
-                                <td>{{this.jointime}}</td>
-                            
-                                <td></td>
+                                <td>{{this.day}}</td>
+                                <td>{{this.time}}</td>
 
                             </tr>
                             {{/each}}
@@ -88,22 +84,21 @@
 
                             {{/if}}
                         </tbody>
-
+                        <!--
                         <tbody>
 
-                            {{#each doctor }}
+                            {{#each appointments }}
                             <tr>
-                                <td>{{this.ID}}</td>
                                 <td>{{this.name}}</td>
-                                <td>{{this.specialization}}</td>
-                                <td>{{this.days}}</td>
-                                
+                                <td>{{this.day}}</td>
+                                <td>{{this.time}}</td>
+
 
                             </tr>
                             {{/each}}
 
 
-                        </tbody>
+                        </tbody>-->
 
                     </table>
                 </div>

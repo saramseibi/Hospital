@@ -24,23 +24,23 @@ const db = mysql.createConnection({
 
 hashPassword('100');
 console.log(hashPassword);*/
-const signin= async (req, res, next) => {
+const signin = async (req, res, next) => {
     try {
         //console.log(req.body);
-        const { Username, password ,code } = req.body;
+        const { Username, password, code } = req.body;
 
         let [userExists] = await db.promise().query('SELECT ID FROM doctor WHERE name = ?', [Username]);
         if (userExists.length === 0) {
             return res.render('doctorlogin', { message: 'No user found with that username' });
         }
-        
+
         let [userResults] = await db.promise().query('SELECT ID,doctor_code, name,image, password  FROM doctor WHERE doctor_code ', [code]);
         if (userResults.length === 0) {
             return res.render('doctorlogin', { message: 'No doctor found with that code' });
         }
-        
+
         const user = userResults[0];
-        console.log('Session ', user); 
+        console.log('Session ', user);
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.render('doctorlogin', { message: 'Incorrect password' });
@@ -57,7 +57,7 @@ const signin= async (req, res, next) => {
         console.log(error);
         next(error);
     }
-    
+
 };
 // edit profile 
 
@@ -135,7 +135,7 @@ const forget = async (req, res) => {
 
 
         try {
-            db.query(updateQuery, [token,  user.ID]);
+            db.query(updateQuery, [token, user.ID]);
 
             const transporter = nodemailer.createTransport({
                 service: "Gmail",
@@ -184,7 +184,7 @@ const reset = async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash(password, 8);
         const updateQuery = 'UPDATE doctor SET password = ? WHERE token = ?';
-        
+
         // Executing the query once with error handling
         const [result] = await db.promise().query(updateQuery, [hashedPassword, token]);
 
@@ -200,4 +200,32 @@ const reset = async (req, res) => {
         return res.render('doctorresetpassword.hbs', { token, message: 'Error updating password' });
     }
 };
-module.exports = { signin,upload,forget,reset ,router};
+//search 
+const search = (req, res) => {
+    console.log('Query parameters:', req.query);
+    const name = req.query.name || '';
+    const query = 'SELECT * FROM appointments WHERE LOWER(name) LIKE LOWER(?)';
+    const values = [`%${name}%`];
+
+    //console.log('Executing query:', query);
+    //console.log('With values:', values);
+    db.query(query, values, (error, results) => {
+        if (error) {
+            console.error(error);
+            return res.status(500).send('An internal server error occurred');
+        }
+
+        if (results.length > 0) {
+            return res.render('doctoraccount.hbs', {
+                appointments: results, 
+                doctorname: req.session.doctorname,
+                doctorProfileImage: req.session.doctorimage
+            });
+
+        } else {
+            return res.render('doctoraccount.hbs', { appointments: [], message: 'No search results found' });
+        }
+    });
+};
+
+module.exports = { signin, upload, forget, reset, search, router };

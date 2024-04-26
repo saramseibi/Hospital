@@ -17,4 +17,5 @@ router.post("/reservation/:doctorId",authController.reservation);
 router.post("/doctorsignin",doctorController.signin);
 router.post("/doctorforgetpassword",doctorController.forget);
 router.post("/doctorresetpassword",doctorController.reset );
+router.get("/doctorsearch",doctorController.search);
 module.exports = router;

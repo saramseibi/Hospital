@@ -40,18 +40,45 @@ router.get('/resetpassword/:token', (req, res) => {
     const token = req.params.token;
 
     res.render('resetpassword.hbs', { token });
-});
-router.get("/patientacount", (req, res) => {
+});/*
+function getDaysRange(daysString) {
+    const weekdays = {
+      '12345': 'Monday to Friday',
+      '123456': 'Monday to Saturday'
+    };
+  
+    return weekdays[daysString] || 'Some days are missing';
+  }
+  
+  // Usage
+  let daysRange1 = getDaysRange("123456");
+  let daysRange2 = getDaysRange("12345");
+  console.log(daysRange1); // Outputs: Monday to Saturday
+  console.log(daysRange2);*/
+
+  router.get("/patientacount", (req, res, next) => {
     if (!req.session.name) {
         return res.redirect('/Plogin');
     }
-    var sql = 'SELECT ID, name, specialization ,days ,join_time,logout_time FROM doctor';
+    var sql = 'SELECT ID, name, specialization, days, join_time, logout_time FROM doctor';
     db.query(sql, function (error, results) {
         if (error) {
             return next(error);
         }
+        function getDaysRange(daysString) {
+          const weekdays = {
+            '12345': 'Monday-Friday',
+            '123456': 'Monday-Saturday'
+          };
+
+          return weekdays[daysString] || 'Some days are missing';
+        }
+        results.forEach(doctor => {
+            doctor.days = getDaysRange(doctor.days);
+        });
 
         if (results.length > 0) {
+            
             req.session.doctorid = results[0].ID;
             req.session.doctorname = results[0].name;
             req.session.save();
@@ -65,7 +92,6 @@ router.get("/patientacount", (req, res) => {
                 userProfileImage: req.session.image
             });
         } else {
-
             res.render('patientacount.hbs', {
                 username: req.session.name,
                 userProfileImage: req.session.image
@@ -82,6 +108,11 @@ router.get("/reservation/:doctorId", async(req, res,next) => {
             res.status(404).send('Doctor not found');
             return;
         }
+        req.session.doctor = {
+            id: doctorId,
+            name: user.name,
+            image: user.image
+        };
         res.render("reservation.hbs", {
             doctorId: doctorId,
             doctorname: user.name,
@@ -109,19 +140,49 @@ router.get("/doctorsignin", (req, res) => {
     res.render("doctorlogin");
 });
 
-router.get("/doctoraccount", (req, res) => {
+router.get("/doctoraccount", (req, res, next) => {
     if (!req.session.doctorname) {
         return res.redirect('/doctorlogin');
-    } else {
+    }
+
+    const sql = "SELECT name, day, time FROM appointments WHERE doctor_name = ? AND day = CURDATE()";
+    
+    
+    db.query(sql, [req.session.doctorname], (error, results) => {
+        if (error) {
+            return next(error); 
+        }
+        const formattedResults = results.map(appointment => {
+            const date = new Date(appointment.day);
+            const dayFormatted = date.toLocaleDateString('en-US', {
+                weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'
+            });
+            return {
+                ...appointment,
+                day: dayFormatted
+            };
+        });
         console.log(`Session Name: ${req.session.doctorname}`);
         console.log(`Session id: ${req.session.doctorid}`);
         console.log(`Session image: ${req.session.doctorimage}`);
-        res.render('doctoraccount.hbs', {
-            doctorname: req.session.doctorname,
-            doctorProfileImage: req.session.doctorimage
-        });
-    }
+
+        
+        if (formattedResults.length > 0) {
+            res.render('doctoraccount.hbs', {
+                appointments: formattedResults, 
+                doctorname: req.session.doctorname,
+                doctorProfileImage: req.session.doctorimage
+            });
+        } else {
+            res.render('doctoraccount.hbs', {
+                doctorname: req.session.doctorname,
+                doctorProfileImage: req.session.doctorimage,
+                message: 'No appointments for today.'
+            });
+        }
+    });
 });
+
 router.get("/doctoreditprofile", (req, res) => {
     res.render("doctoreditprofile");
 });

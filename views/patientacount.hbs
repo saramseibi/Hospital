@@ -22,10 +22,7 @@
                         <span class="item">{{username}}</span>
                     </a></li>
 
-                <li><a href="#" class="decoration">
-                        <i class="fas fa-thisbase"></i>
-                        <span class="item"> </span>
-                    </a></li>
+            
                 <li><a href="/editprofile" class="decoration">
                         <i class="fas fa-user"></i>
                         <span class="item">EditProfile</span>
@@ -166,12 +163,14 @@
                             {{#if searchp.length}}
                             {{#each searchp}}
                             <tr>
+                                 <td>{{this.id}}</td>
                                 <td>{{this.name}}</td>
                                 <td>{{this.depart}}</td>
                                 <td>{{this.days}}</td>
                                 <td>{{this.jointime}}</td>
                                 <td>{{this.logouttime}}</td>
-                                 <td></td>
+                                <td ><a href="/reservation/{{this.id}}"  class="style"> reservation </a></td>
+
 
                             </tr>
                             {{/each}}
@@ -180,7 +179,7 @@
                             {{/if}}
                         </tbody>
                       
-                        <tbody>
+                    <tbody>
 
                             {{#each doctor }}
                             <tr>
