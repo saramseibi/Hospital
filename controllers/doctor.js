@@ -204,8 +204,9 @@ const reset = async (req, res) => {
 const search = (req, res) => {
     console.log('Query parameters:', req.query);
     const name = req.query.name || '';
-    const query = 'SELECT * FROM appointments WHERE LOWER(name) LIKE LOWER(?)';
-    const values = [`%${name}%`];
+    const doctorname=req.session.doctorname;
+    const query = 'SELECT * FROM appointments WHERE LOWER(name) LIKE LOWER(?) AND doctor_name = ?';
+    const values = [`%${name}%`,doctorname];
 
     //console.log('Executing query:', query);
     //console.log('With values:', values);
@@ -214,10 +215,19 @@ const search = (req, res) => {
             console.error(error);
             return res.status(500).send('An internal server error occurred');
         }
-
-        if (results.length > 0) {
+        const formattedResults = results.map(appointment => {
+            const date = new Date(appointment.day);
+            const dayFormatted = date.toLocaleDateString('en-US', {
+                weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'
+            });
+            return {
+                ...appointment,
+                day: dayFormatted
+            };
+        });
+        if (formattedResults.length  > 0) {
             return res.render('doctoraccount.hbs', {
-                appointments: results, 
+                appointments: formattedResults, 
                 doctorname: req.session.doctorname,
                 doctorProfileImage: req.session.doctorimage
             });

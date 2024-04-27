@@ -342,23 +342,39 @@ table thead tr {
     }
 
     td:nth-of-type(1)::before {
-        content: "Name :";
+        content: "ID :";
         padding: 0 25px 0 9px ;
     }
     td:nth-of-type(2)::before {
-        content: "Depart :";
+        content: "Name:";
         padding: 0 25px 0 9px ;
     }
     td:nth-of-type(3)::before {
-        content: "Days :";
+        content: "Depart:";
         padding: 0 25px 0 9px ;
     }
     td:nth-of-type(4)::before {
-        content: "Join Time :";
+        content: "Days :";
         padding: 0 25px 0 9px ;
     }
     td:nth-of-type(5)::before {
+        content: "Join Time :";
+        padding: 0 25px 0 9px ;
+    }
+    td:nth-of-type(6)::before {
         content: "Logout Time :";
+        padding: 0 25px 0 9px ;
+    }
+    .display:nth-of-type(1)::before {
+        content: "Name :";
+        padding: 0 25px 0 9px ;
+    }
+    .display:nth-of-type(2)::before {
+        content: "Day:";
+        padding: 0 25px 0 9px ;
+    }
+    .display:nth-of-type(3)::before {
+        content: "Time :";
         padding: 0 25px 0 9px ;
     }
    
@@ -401,7 +417,7 @@ table thead tr {
     .nav-title{
         order: 2;
     }
-    nav .fas{
+    nav .fas,.fab{
         width: 50px;
 
     }

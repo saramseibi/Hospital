@@ -200,7 +200,7 @@ const resetpassword = async (req, res) => {
 const search = (req, res) => {
     console.log('Query parameters:', req.query);
     const name = req.query.name || '';
-    const query = 'SELECT * FROM searchp WHERE LOWER(name) LIKE LOWER(?)';
+    const query = 'SELECT * FROM doctor WHERE LOWER(name) LIKE LOWER(?)';
     const values = [`%${name}%`];
 
     //console.log('Executing query:', query);
@@ -210,15 +210,25 @@ const search = (req, res) => {
             console.error(error);
             return res.status(500).send('An internal server error occurred');
         }
+        function getDaysRange(daysString) {
+            const weekdays = {
+                '12345': 'Monday-Friday',
+                '123456': 'Monday-Saturday'
+            };
 
+            return weekdays[daysString] || 'Some days are missing';
+        }
+        results.forEach(doctor => {
+            doctor.days = getDaysRange(doctor.days);
+        });
         if (results.length > 0) {
             return res.render('patientacount.hbs', {
-                searchp: results, username: req.session.name,
+                doctor: results, username: req.session.name,
                 userProfileImage: req.session.image
                 
             });
         } else {
-            return res.render('patientacount.hbs', { searchp: [], message: 'No search results found' });
+            return res.render('patientacount.hbs', { doctor: [], message: 'No search results found' });
         }
     });
 };

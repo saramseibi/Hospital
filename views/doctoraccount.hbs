@@ -2,12 +2,13 @@
 <html lang="en">
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Font Awesome Cdn Link -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
     <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
     <link rel="stylesheet" href="/acount.css" />
     <title>CURAHOPE</title>
-    <link rel="icon" type="image/svg" href="img/doctor-svgrepo-com.svg">
+    <link rel="icon" type="image/svg" href="/img/doctor-svgrepo-com.svg">
 </head>
 
 <body>
@@ -74,9 +75,9 @@
                             {{#if appointments.length}}
                             {{#each appointments}}
                             <tr>
-                                <td>{{this.name}}</td>
-                                <td>{{this.day}}</td>
-                                <td>{{this.time}}</td>
+                                <td class="display">{{this.name}}</td>
+                                <td class="display">{{this.day}}</td>
+                                <td class="display">{{this.time}}</td>
 
                             </tr>
                             {{/each}}

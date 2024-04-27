@@ -40,23 +40,10 @@ router.get('/resetpassword/:token', (req, res) => {
     const token = req.params.token;
 
     res.render('resetpassword.hbs', { token });
-});/*
-function getDaysRange(daysString) {
-    const weekdays = {
-      '12345': 'Monday to Friday',
-      '123456': 'Monday to Saturday'
-    };
-  
-    return weekdays[daysString] || 'Some days are missing';
-  }
-  
-  // Usage
-  let daysRange1 = getDaysRange("123456");
-  let daysRange2 = getDaysRange("12345");
-  console.log(daysRange1); // Outputs: Monday to Saturday
-  console.log(daysRange2);*/
+});
 
-  router.get("/patientacount", (req, res, next) => {
+
+router.get("/patientacount", (req, res, next) => {
     if (!req.session.name) {
         return res.redirect('/Plogin');
     }
@@ -66,19 +53,19 @@ function getDaysRange(daysString) {
             return next(error);
         }
         function getDaysRange(daysString) {
-          const weekdays = {
-            '12345': 'Monday-Friday',
-            '123456': 'Monday-Saturday'
-          };
+            const weekdays = {
+                '12345': 'Monday-Friday',
+                '123456': 'Monday-Saturday'
+            };
 
-          return weekdays[daysString] || 'Some days are missing';
+            return weekdays[daysString] || 'Some days are missing';
         }
         results.forEach(doctor => {
             doctor.days = getDaysRange(doctor.days);
         });
 
         if (results.length > 0) {
-            
+
             req.session.doctorid = results[0].ID;
             req.session.doctorname = results[0].name;
             req.session.save();
@@ -99,7 +86,7 @@ function getDaysRange(daysString) {
         }
     });
 });
-router.get("/reservation/:doctorId", async(req, res,next) => {
+router.get("/reservation/:doctorId", async (req, res, next) => {
     try {
         const doctorId = req.params.doctorId;
         let [userResults] = await db.promise().query('SELECT  name,image FROM doctor WHERE ID=? ', [doctorId]);
@@ -119,9 +106,9 @@ router.get("/reservation/:doctorId", async(req, res,next) => {
             doctorimage: user.image
         });
 
-    } catch (error){
-            console.log(error);
-            next(error);
+    } catch (error) {
+        console.log(error);
+        next(error);
     }
 });
 
@@ -146,11 +133,11 @@ router.get("/doctoraccount", (req, res, next) => {
     }
 
     const sql = "SELECT name, day, time FROM appointments WHERE doctor_name = ? AND day = CURDATE()";
-    
-    
+
+
     db.query(sql, [req.session.doctorname], (error, results) => {
         if (error) {
-            return next(error); 
+            return next(error);
         }
         const formattedResults = results.map(appointment => {
             const date = new Date(appointment.day);
@@ -166,10 +153,10 @@ router.get("/doctoraccount", (req, res, next) => {
         console.log(`Session id: ${req.session.doctorid}`);
         console.log(`Session image: ${req.session.doctorimage}`);
 
-        
+
         if (formattedResults.length > 0) {
             res.render('doctoraccount.hbs', {
-                appointments: formattedResults, 
+                appointments: formattedResults,
                 doctorname: req.session.doctorname,
                 doctorProfileImage: req.session.doctorimage
             });
