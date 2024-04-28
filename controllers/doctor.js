@@ -103,7 +103,7 @@ router.post('/doctoreditprofile', upload.single('fileToUpload'), async (req, res
         const { name: doctorname, image: doctorProfileImage } = results[0];
 
 
-        return res.render('doctoraccount', {
+        return res.render('doctoreditprofile', {
             message: "Profile updated successfully!",
             doctorname: doctorname,
             doctorProfileImage: doctorProfileImage

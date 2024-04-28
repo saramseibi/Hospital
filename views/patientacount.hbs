@@ -21,14 +21,18 @@
                         <img src="{{ userProfileImage }}">
                         <span class="item">{{username}}</span>
                     </a></li>
+                <li><a href="/patientacount" class="decoration">
+                        <i class="fas fa-database"></i>
+                        <span class="item">Appointment</span>
+                    </a>
+                </li>
 
-            
                 <li><a href="/editprofile" class="decoration">
                         <i class="fas fa-user"></i>
                         <span class="item">EditProfile</span>
                     </a></li>
 
-               
+
                 <li><a href="#" class="decoration">
                         <i class="fas fa-question-circle"></i>
                         <span class="item">Help</span>
@@ -40,7 +44,7 @@
                         <span class="item">Log out</span>
                     </button>
                 </form>
-                
+
             </ul>
         </nav>
 
@@ -158,7 +162,7 @@
                             </tr>
 
                         </thead>
-                          <!--<tbody>
+                        <!--<tbody>
 
                             {{#if searchp.length}}
                             {{#each searchp}}
@@ -178,8 +182,8 @@
 
                             {{/if}}
                         </tbody>-->
-                      
-                    <tbody>
+
+                        <tbody>
 
                             {{#each doctor }}
                             <tr>
@@ -189,14 +193,14 @@
                                 <td>{{this.days}}</td>
                                 <td>{{this.join_time}}</td>
                                 <td>{{this.logout_time}}</td>
-                                <td ><a href="/reservation/{{this.ID}}"  class="style"> reservation </a></td>
+                                <td><a href="/reservation/{{this.ID}}" class="style"> reservation </a></td>
 
                             </tr>
                             {{/each}}
 
 
                         </tbody>
-                       
+
                     </table>
                 </div>
             </section>

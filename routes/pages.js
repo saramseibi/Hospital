@@ -117,7 +117,10 @@ router.get("/signin", (req, res) => {
 });
 
 router.get("/editprofile", (req, res) => {
-    res.render("editprofile.hbs");
+    res.render("editprofile.hbs",{
+        username: req.session.name,
+        userProfileImage: req.session.image
+    });
 });
 //doctor router
 router.get("/doctorlogin", (req, res) => {
@@ -171,7 +174,10 @@ router.get("/doctoraccount", (req, res, next) => {
 });
 
 router.get("/doctoreditprofile", (req, res) => {
-    res.render("doctoreditprofile");
+    res.render("doctoreditprofile", {
+        doctorname: req.session.doctorname,
+        doctorProfileImage: req.session.doctorimage,
+    });
 });
 router.get("/doctorforgetpassword", (req, res) => {
     res.render("doctorforgetpassword.hbs");
@@ -180,5 +186,23 @@ router.get('/doctorresetpassword/:token', (req, res) => {
     const token = req.params.token;
 
     res.render('doctorresetpassword.hbs', { token });
+});
+router.get('/document', (req, res) => {
+    res.render('document.hbs', {
+        doctorname: req.session.doctorname,
+        doctorProfileImage: req.session.doctorimage,
+    });
+});
+router.get('/adddocument', (req, res) => {
+    res.render('adddocument.hbs', {
+        doctorname: req.session.doctorname,
+        doctorProfileImage: req.session.doctorimage,
+    });
+});
+router.get('/aa', (req, res) => {
+    res.render('aa.hbs', {
+        doctorname: req.session.doctorname,
+        doctorProfileImage: req.session.doctorimage,
+    });
 });
 module.exports = router;

@@ -83,7 +83,7 @@ nav .fas ,.fab {
     display: grid ;
     grid-template-rows: 1fr ;
     grid-template-columns: repeat(2, 60px );
-    gap:  0 px !important;
+    gap:  0px !important;
     padding: 10px ;
 }
 a.decoration:hover{
@@ -536,3 +536,4 @@ form:valid .fa{
 form:valid a {
   display: block;
 }
+/*edit*/
