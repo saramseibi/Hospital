@@ -123,7 +123,7 @@ a:hover i {
 }
 .main{
     font-family: Arial, sans-serif;
-    margin: 170px 70px 170px 500px;
+    margin: auto;
 }
 h1 {
     color:black;
@@ -176,14 +176,46 @@ input.cc , .cc {
     margin: 10px 6px ;
 
 }
+ 
+@media (max-width: 627px) {
+    nav {
+        width: 58px;
+    }
+    .main {
+        padding: 20px 10px 20px 5px !important;
+    }
+    .decoration,.log{
+        grid-template-columns: repeat(2, 46px );
 
-@media (max-width: 750px) {
-    body{
-        margin: 170px 90px;
     }
-}
-@media (max-width:600px) {
-    body{
-        margin: 170px 50px;
+    .item{
+        margin: 0;
     }
+    .logo{
+        margin-left: 3px;
+        padding-left: 2px;
+        
+    }
+    .nav-bar{
+        display: grid !important;
+        grid-template-rows: repeat(2, 1fr) !important;
+        grid-template-columns: 1fr;
+        gap: 1.5em;
+    }
+   
+    .nav-title{
+        order: 2;
+    }
+    nav .fas,.fab{
+        width: 50px;
+
+    }
+    nav{
+        width: 58px;
+    }
+    input[type="text"], input[type="email"], input[type="password"], input[type="file"] {
+        width: 100%;
+    }
+
 }
+
