@@ -139,9 +139,9 @@ a:hover i {
     width: 100%;
     padding: 10px;
     margin-top: 10px;
-    background: #fff;
+    background: transparent;
     border-radius: 10px;
-    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.2);
+
    
 }
 .btn {
@@ -205,4 +205,90 @@ table thead tr {
 }
 h1{
     text-transform: capitalize;
+}
+.input-group {
+    position: relative;
+    width: 300px; /* Largeur du groupe de recherche */
+}
+
+.input-group .form-control {
+    width: calc(100% - 90px); /* Largeur de l'entrée de recherche */
+}
+
+.input-group .material-icons {
+position: absolute;
+top: 50%;
+right: 10px; /* Ajustez la distance de l'icône de recherche par rapport à la droite */
+transform: translateY(-50%);
+cursor: pointer;
+z-index: 1;
+}
+
+
+.input-group .btn {
+    width: 40px; /* Largeur du bouton de recherche */
+    position: absolute;
+    top: 50%;
+    right: 0; /* Distance du bouton de recherche par rapport à la droite */
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
+.input-group .btn:first-child {
+    margin-right: 5px; /* Espacement à droite du premier bouton */
+}
+
+.input-group .btn:last-child {
+    margin-left: 5px; /* Espacement à gauche du deuxième bouton */
+}
+
+.search-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    margin-top: 150px; /* Ajustez selon vos besoins */
+}
+#documents-list {
+display: grid;
+grid-template-columns: repeat(3, 1fr); /* Trois colonnes de largeur égale */
+grid-gap: 20px; /* Espacement entre les documents */
+}
+
+.document-thumbnail {
+width: 100%; /* Chaque document occupe toute la largeur de sa colonne */
+max-width: 350px; /* Taille maximale pour chaque document */
+padding: 0.5rem;
+border: 1px solid black;
+border-radius: 4px;
+transition: box-shadow 0.3s ease;
+background-color: #fff; /* Fond blanc */
+}
+
+.document-thumbnail:hover {
+box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.document-icon {
+font-size: 2rem;
+}
+
+.document-info {
+margin-left: 1rem;
+}
+.document-info:hover{
+color: #666777;
+}
+
+.document-info p {
+margin: 0;
+color: #333;
+font-weight: bold;
+font-style: oblique;
+}
+img.d-block {
+    height: 800px;
 }

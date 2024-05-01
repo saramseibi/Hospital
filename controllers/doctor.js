@@ -243,9 +243,6 @@ router.post('/doctoreditprofile', upload.single('fileToUpload'), async (req, res
 
 });
 // add document + blockhain 
-
-
-// New configuration for blockchain document uploads
 const blockchainStorage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, './blockchainUpload');

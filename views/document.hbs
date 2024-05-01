@@ -82,145 +82,84 @@
                                 data-bs-toggle="modal" data-bs-target="#addDocumentModal">Add Document</button>
                         </form>
                     </div>
+
                     <div id="documents-list" class="display documents-list"></div>
-                    <!--
-                    <div class="display">
-                        <h1></h1>
-                        <table class="tr" id="documentTable">
-                            <thead>
-                                <tr>
-                                    <th> Name</th>
-                                    <th>description</th>
 
 
+                    <!-- Modal -->
+                    <div class="modal fade" id="addDocumentModal" tabindex="-1" aria-labelledby="addDocumentModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="addDocumentModalLabel">Add Document</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="addDocumentForm" action="/doctor/upload" method="post"
+                                        enctype="multipart/form-data">
+                                        <div class="mb-3">
+                                            <label for="file" class="form-label">Choose File:</label>
+                                            <input type="file" class="form-control" id="file" name="file" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="fileName" class="form-label">File Name:</label>
+                                            <input type="text" class="form-control" id="fileName" name="fileName"
+                                                required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Upload</button>
+                                    </form>
+                                </div>
 
-                                </tr>
-                            </thead>
-                            <tbody id="documents-list">
-                           
-                            </tbody>
-                        </table>
-                    </div>-->
-                </div>
-            </div>
-        </div>
-        <!-- Modal -->
-        <div class="modal fade" id="addDocumentModal" tabindex="-1" aria-labelledby="addDocumentModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="addDocumentModalLabel">Add Document</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="addDocumentForm" action="/upload" method="post" enctype="multipart/form-data">
-                            <div class="mb-3">
-                                <label for="file" class="form-label">Choose File:</label>
-                                <input type="file" class="form-control" id="file" name="file" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="fileName" class="form-label">File Name:</label>
-                                <input type="text" class="form-control" id="fileName" name="fileName" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Upload</button>
-                        </form>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-
-  window.onload = function () {
-    fetch('/documents')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            const documentsList = document.getElementById('documents-list');
-            documentsList.innerHTML = ''; // Clear previous contents
-            data.documents.forEach(doc => {
-                const ipfsLink = `http://localhost:8080/ipfs/${doc.ipfsHash}`;
-                const documentThumbnail = `
-                    <div class="document-thumbnail" onclick="window.open('${ipfsLink}', '_blank')">
-                        <div class="document-info d-flex align-items-center">
-                            <div class="document-icon me-2">
-                                <i class="fas fa-file-alt"></i>
-                            </div>
-                            <div class="document-name">
-                                <p>${doc.fileName}</p>
                             </div>
                         </div>
-                    </div>`;
-                documentsList.insertAdjacentHTML('beforeend', documentThumbnail);
-            });
-        })
-        .catch(error => {
-            console.error('Error fetching documents:', error);
-            document.getElementById('documents-list').innerHTML = `<p>Error: ${error.message}</p>`;
-        });
-};
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        
-       /* window.onload = function () {
-    fetchDocuments();
-};
+        <script>
 
-function fetchDocuments() {
-    const documentsList = document.getElementById('documents-list');
-    documentsList.innerHTML = '<p>Loading documents...</p>'; // Show loading message
 
-    fetch('/documents')
-        .then(response => response.json())
-        .then(data => {
-            if (data.documents && data.documents.length > 0) {
-                documentsList.innerHTML = ''; // Clear loading message or previous content
-                data.documents.forEach(doc => {
-                    const ipfsLink = `http://localhost:8080/ipfs/${doc.ipfsHash}`;
-        const documentThumbnail = `
-                        <div class="document-thumbnail" onclick="window.open('${ipfsLink}', '_blank')">
-                            <div class="document-info d-flex align-items-center">
-                                <div class="document-icon me-2">
-                                    <i class="fas fa-file-alt"></i>
-                                </div>
-                                <div class="document-name">
-                                    <p>${doc.fileName}</p>
-                                </div>
-                            </div>
-                        </div>`;
-        documentsList.insertAdjacentHTML('beforeend', documentThumbnail);
-                });
-            } else {
-            documentsList.innerHTML = '<p>No documents found.</p>'; // Display no documents message
-        }
-        })
-        .catch (error => {
-            console.error('Error fetching documents:', error);
-            documentsList.innerHTML = `<p>Error loading documents: ${error.message}. Please try again later.</p>`;
-        });
-}
-*/
-        $(document).ready(function () {
-            $('#searchInput').on('input', function () {
-                var searchText = $(this).val().toLowerCase();
-                $('.document-thumbnail').each(function () {
-                    var fileName = $(this).find('.document-name p').text().toLowerCase();
-                    if (fileName.includes(searchText)) {
-                        $(this).show();
-                    } else {
-                        $(this).hide();
-                    }
+            window.onload = function () {
+                fetch('/doctor/documents')
+                    .then(response => response.json())
+                    .then(data => {
+                        const documentsList = document.getElementById('documents-list');
+                        data.documents.forEach(doc => {
+                            const ipfsLink = `http://localhost:8080/ipfs/${doc.ipfsHash}`;
+                            const documentThumbnail = `
+                    <div class="document-thumbnail" onclick="window.open('${ipfsLink}', '_blank')">
+    <div class="document-info d-flex align-items-center"> <!-- Utilisez une classe flex pour aligner horizontalement -->
+        <div class="document-icon me-2"> <!-- Ajoutez une classe de marge à droite pour l'espacement -->
+            <i class="fas fa-file-alt"></i>
+        </div>
+        <div class="document-name"> <!-- Ajoutez une classe pour le nom du document -->
+            <p>${doc.fileName}</p>
+        </div>
+    </div>
+</div>`;
+                            documentsList.insertAdjacentHTML('afterbegin', documentThumbnail);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching documents:', error));
+            };
+            $(document).ready(function () {
+                $('#searchInput').on('input', function () {
+                    var searchText = $(this).val().toLowerCase();
+                    $('.document-thumbnail').each(function () {
+                        var fileName = $(this).find('.document-name p').text().toLowerCase();
+                        if (fileName.includes(searchText)) {
+                            $(this).show();
+                        } else {
+                            $(this).hide();
+                        }
+                    });
                 });
             });
-        });
 
-    </script>
+        </script>
 
 
 
