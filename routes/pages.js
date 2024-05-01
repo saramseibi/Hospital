@@ -187,12 +187,14 @@ router.get('/doctorresetpassword/:token', (req, res) => {
 
     res.render('doctorresetpassword.hbs', { token });
 });
+
 router.get('/document', (req, res) => {
     res.render('document.hbs', {
         doctorname: req.session.doctorname,
         doctorProfileImage: req.session.doctorimage,
     });
 });
+
 router.get('/adddocument', (req, res) => {
     res.render('adddocument.hbs', {
         doctorname: req.session.doctorname,
@@ -205,4 +207,5 @@ router.get('/aa', (req, res) => {
         doctorProfileImage: req.session.doctorimage,
     });
 });
+
 module.exports = router;

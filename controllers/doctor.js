@@ -248,7 +248,7 @@ router.post('/doctoreditprofile', upload.single('fileToUpload'), async (req, res
 // New configuration for blockchain document uploads
 const blockchainStorage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, './uploads');
+      cb(null, './blockchainUpload');
     },
     filename: function (req, file, cb) {
       cb(null, Date.now() + '-' + file.originalname);
@@ -268,95 +268,96 @@ const provider = new HDWalletProvider({
 
 const web3 = new Web3(provider);
 const ipfsClient = create({ host: '127.0.0.1', port: '5001', protocol: 'http' });
-const abi = [
-    {
-        "inputs": [
-            {
-                "internalType": "string",
-                "name": "fileName",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
-                "name": "ipfsHash",
-                "type": "string"
-            },
-            {
-                "internalType": "uint256",
-                "name": "doctorId",
-                "type": "uint256"
-            }
-        ],
-        "name": "upload",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "doctorId",
-                "type": "uint256"
-            }
-        ],
-        "name": "getDoctorDocuments",
-        "outputs": [
-            {
-                "components": [
-                    {
-                        "internalType": "string",
-                        "name": "fileName",
-                        "type": "string"
-                    },
-                    {
-                        "internalType": "string",
-                        "name": "ipfsHash",
-                        "type": "string"
-                    }
-                ],
-                "internalType": "struct StockageHachages.Document[]",
-                "name": "",
-                "type": "tuple[]"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "doctorId",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "index",
-                "type": "uint256"
-            }
-        ],
-        "name": "getDocumentDetails",
-        "outputs": [
-            {
-                "internalType": "string",
-                "name": "",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
-                "name": "",
-                "type": "string"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    }
+const abi =[
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "fileName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "ipfsHash",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "doctorId",
+				"type": "uint256"
+			}
+		],
+		"name": "upload",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "doctorId",
+				"type": "uint256"
+			}
+		],
+		"name": "getDoctorDocuments",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "fileName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "ipfsHash",
+						"type": "string"
+					}
+				],
+				"internalType": "struct StockageHachages.Document[]",
+				"name": "",
+				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "doctorId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "index",
+				"type": "uint256"
+			}
+		],
+		"name": "getDocumentDetails",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
 ];
-const contractAddress = '0xd9145CCE52D386f254917e481eB44e9943F39138';
+const contractAddress = '0x7D247aCa4EA133199634Fd1d5dA301E968251763';
 const contract = new web3.eth.Contract(abi, contractAddress);
 
-router.post('/upload', upload.single('file'), async (req, res) => {
+
+router.post('/upload', blockchainUpload.single('file'), async (req, res) => {
     try {
         // Check if a file was uploaded
         if (!req.file) {
@@ -395,7 +396,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
         // Construct the transaction object
         const txObject = {
             from: '0xcb0D87301033298553023673d60070Ee65FD1252',
-            to: '0xd9145CCE52D386f254917e481eB44e9943F39138',
+            to: '0x7D247aCa4EA133199634Fd1d5dA301E968251763',
             gas: gasLimit, // Set the gas limit here
             gasPrice: gasPrice, // Set the gas price here
             data: contract.methods.upload(fileName, ipfsHash, doctorId).encodeABI()
@@ -417,38 +418,34 @@ router.post('/upload', upload.single('file'), async (req, res) => {
 });
 router.get('/documents', async (req, res) => {
     try {
-        // Vérifier si l'ID du médecin est présent dans la session et s'il est valide
-        const doctorId = req.session.doctorId;
+        const doctorId = req.session.doctorid;
+        console.log('Session Doctor ID:', doctorId);  // Debug: log session doctor ID
+
         if (!doctorId || doctorId <= 0) {
             return res.status(400).json({ message: 'Invalid doctor ID' });
         }
 
-        // Appeler la fonction de vue du contrat pour récupérer les documents du médecin spécifique
+        console.log('Contract Address:', contract.options.address); // Ensure contract is loaded
         const contractResponse = await contract.methods.getDoctorDocuments(doctorId).call();
+        console.log('Contract Response:', contractResponse);  // Log the response from the blockchain
 
-        // Vérifier si des documents ont été renvoyés
         if (!contractResponse || contractResponse.length === 0) {
             return res.status(404).json({ message: 'No documents found for the doctor' });
         }
 
-        // Mapper les données renvoyées par le contrat pour les documents
         const documents = contractResponse.map(doc => ({
             fileName: doc.fileName,
             ipfsHash: doc.ipfsHash
         }));
 
-        // Renvoyer les documents en réponse à la requête HTTP
         res.json({ documents });
     } catch (error) {
         console.error('Error fetching documents:', error);
-        // Gérer les erreurs spécifiques et renvoyer des messages d'erreur descriptifs
-        if (error.code === 4001) {
-            return res.status(401).json({ message: 'Unauthorized access: Please log in' });
-        } else {
-            return res.status(500).json({ message: 'Error fetching documents from blockchain' });
-        }
+        return res.status(500).json({ message: `Error fetching documents from blockchain: ${error.message}` });
     }
 });
 
-module.exports = { signin, upload, forget, reset, search, router };
+
+
+module.exports = { signin, blockchainUpload,upload, forget, reset, search, router };
 //module.exports = ipfs;
