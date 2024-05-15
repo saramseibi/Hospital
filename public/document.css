@@ -79,7 +79,7 @@ nav .fas ,.fab {
     text-decoration: none !important;
     display: grid ;
     grid-template-rows: 1fr ;
-    grid-template-columns: repeat(2, 60px );
+    grid-template-columns: 60px 90px;
     gap:  0px !important;
     padding: 10px ;
 }
@@ -107,8 +107,7 @@ a:hover i {
     text-decoration: none;
     background-color:transparent;
     padding-left: 10px;
-    padding-top: 50%;
-    padding-bottom: 0%;
+    padding-bottom: 15%;
 
 
 }
@@ -116,6 +115,9 @@ a:hover i {
     position: absolute ;
     bottom: 0 !important;
     top:90%;
+    width: 200px;
+    cursor: pointer;
+    
 }
 
 .contner {
@@ -292,4 +294,59 @@ font-style: oblique;
 }
 img.d-block {
     height: 800px;
+}
+@media (max-width: 627px) {
+    .container{
+        max-width: 440px !important;
+    } 
+
+    .main {
+        padding: 20px 10px 20px 5px !important;
+    }
+
+    .item {
+        margin: 0;
+    }
+
+    .logo {
+        margin-left: 3px;
+        padding-left: 2px;
+
+    }
+    nav:hover {
+        width: 240px;
+        transition: 1s;
+    }
+    .nav-bar {
+        display: grid !important;
+        grid-template-rows: repeat(2, 1fr) !important;
+        grid-template-columns: 1fr;
+        gap: 1.5em;
+    }
+
+    .nav-title {
+        order: 2;
+    }
+
+    nav .fas,
+    .fab {
+        width: 50px;
+
+    }
+
+    nav {
+        width:58px ;
+    }
+    #documents-list {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-gap: 20px;
+    }
+    .document-thumbnail {
+         width: auto; 
+    }
+    .document-info {
+        margin-left: 1rem;
+        width: 90px;
+    }
 }

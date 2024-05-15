@@ -17,9 +17,9 @@ const db = mysql.createConnection({
     password: process.env.DATABASE_PASSWORD,
     database: process.env.DATABASE
 });
-
-/*async function hashPassword(password) {
-    const saltRounds = 8; 
+/*
+async function hashPassword(password) {
+    const saltRounds = 8;
     try {
         const hashedPassword = await bcrypt.hash(password, saltRounds);
         console.log("Hashed Password:", hashedPassword);
@@ -28,7 +28,7 @@ const db = mysql.createConnection({
     }
 }
 
-hashPassword('100');
+hashPassword('123');
 console.log(hashPassword);*/
 const signin = async (req, res, next) => {
     try {
@@ -189,7 +189,7 @@ const search = (req, res) => {
         }
     });
 };
- //multer config
+//multer config
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, path.join(__dirname, '..', 'public', 'uploads'));
@@ -242,18 +242,20 @@ router.post('/doctoreditprofile', upload.single('fileToUpload'), async (req, res
     }
 
 });
+//param func 
+
 // add document + blockhain 
 const blockchainStorage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, './blockchainUpload');
+        cb(null, './blockchainUpload');
     },
     filename: function (req, file, cb) {
-      cb(null, Date.now() + '-' + file.originalname);
+        cb(null, Date.now() + '-' + file.originalname);
     }
 });
 
 const blockchainUpload = multer({ storage: blockchainStorage });
-const mnemonic = 'render must plunge suggest eight motion bitter agent square crater addict expect';
+const mnemonic = 'setup amazing chalk scene castle knock deliver record one when brush upon';
 const infuraUrl = 'https://sepolia.infura.io/v3/b2b1ddd3656a46e5a80d311155018d4e';
 
 const provider = new HDWalletProvider({
@@ -265,92 +267,99 @@ const provider = new HDWalletProvider({
 
 const web3 = new Web3(provider);
 const ipfsClient = create({ host: '127.0.0.1', port: '5001', protocol: 'http' });
-const abi =[
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "fileName",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "ipfsHash",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "doctorId",
-				"type": "uint256"
-			}
-		],
-		"name": "upload",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "doctorId",
-				"type": "uint256"
-			}
-		],
-		"name": "getDoctorDocuments",
-		"outputs": [
-			{
-				"components": [
-					{
-						"internalType": "string",
-						"name": "fileName",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "ipfsHash",
-						"type": "string"
-					}
-				],
-				"internalType": "struct StockageHachages.Document[]",
-				"name": "",
-				"type": "tuple[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "doctorId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "index",
-				"type": "uint256"
-			}
-		],
-		"name": "getDocumentDetails",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	}
+const abi = [
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "fileName",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "ipfsHash",
+                "type": "string"
+            },
+            {
+                "internalType": "uint256",
+                "name": "doctorId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "patientId",
+                "type": "uint256"
+            }
+        ],
+        "name": "upload",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "doctorId",
+                "type": "uint256"
+            }
+        ],
+        "name": "getDoctorDocuments",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "string",
+                        "name": "fileName",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "ipfsHash",
+                        "type": "string"
+                    }
+                ],
+                "internalType": "struct StockageHachages.Document[]",
+                "name": "",
+                "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "patientId",
+                "type": "uint256"
+            }
+        ],
+        "name": "getPatientDocuments",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "string",
+                        "name": "fileName",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "ipfsHash",
+                        "type": "string"
+                    }
+                ],
+                "internalType": "struct StockageHachages.Document[]",
+                "name": "",
+                "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    }
 ];
-const contractAddress = '0x7D247aCa4EA133199634Fd1d5dA301E968251763';
+const contractAddress = '0xCC3E1a57094BC73ffaA5c3c6650765F60926FA06';
 const contract = new web3.eth.Contract(abi, contractAddress);
 
 
@@ -363,7 +372,6 @@ router.post('/upload', blockchainUpload.single('file'), async (req, res) => {
 
         // Read the uploaded file
         const fileData = await fs.readFile(req.file.path);
-        console.log('File data:', fileData.toString()); // Log the file content
 
         // Add the file to IPFS
         const ipfsResult = await ipfsClient.add(fileData);
@@ -372,35 +380,32 @@ router.post('/upload', blockchainUpload.single('file'), async (req, res) => {
 
         // Delete the temporary file
         await fs.unlink(req.file.path);
-
-        console.log('Doctor ID from session:', req.session.doctorid); // Log the doctor ID from session
-
+        
+        // Retrieve the doctor ID from the session
+        const doctorId = req.session.doctorid;
+        const patientId = req.session.patient.id;
         console.log('IPFS Hash:', ipfsHash);
         if (!ipfsHash) {
             return res.status(500).json({ message: 'Error uploading file: IPFS hash is undefined' });
         }
 
-        // Retrieve the doctor ID from the session
-        const doctorId = req.session.doctorid;
 
         // Retrieve the file name from the request
         const fileName = req.body.fileName;
-
-        // Set the gas limit and get the current gas price
         const gasLimit = 5500000; // Set the gas limit according to your requirements
         const gasPrice = await web3.eth.getGasPrice(); // Get the current gas price
-
         // Construct the transaction object
         const txObject = {
-            from: '0xcb0D87301033298553023673d60070Ee65FD1252',
-            to: '0x7D247aCa4EA133199634Fd1d5dA301E968251763',
+            from: '0x1d7E2e9CFfea8BfE3F25861cB5E9dCD01080a267',
+            to: '0xCC3E1a57094BC73ffaA5c3c6650765F60926FA06',
             gas: gasLimit, // Set the gas limit here
             gasPrice: gasPrice, // Set the gas price here
-            data: contract.methods.upload(fileName, ipfsHash, doctorId).encodeABI()
+            
+            data: contract.methods.upload(fileName, ipfsHash, doctorId, patientId).encodeABI()
         };
 
         // Sign the transaction
-        const privateKey = '0e326c1665a619ef71900df6fecdff6dcb27437028e3c28ebcbed344a6dfbba4';
+        const privateKey = 'a9dbe448195b8a4a6fafd629f054abe7d828df0ca22d20ab96f8284af73ffa52';
         const signedTx = await web3.eth.accounts.signTransaction(txObject, privateKey);
 
         // Send the signed transaction
@@ -413,8 +418,14 @@ router.post('/upload', blockchainUpload.single('file'), async (req, res) => {
         res.status(500).json({ message: 'Error uploading file' });
     }
 });
+
+
+
+
+
 router.get('/documents', async (req, res) => {
     try {
+
         const doctorId = req.session.doctorid;
         console.log('Session Doctor ID:', doctorId);  // Debug: log session doctor ID
 
@@ -441,8 +452,37 @@ router.get('/documents', async (req, res) => {
         return res.status(500).json({ message: `Error fetching documents from blockchain: ${error.message}` });
     }
 });
+router.get('/Pdocuments', async (req, res) => {
+    try {
+        const patientId = req.session.userId;
+        console.log('Session Patient ID:', patientId);
+
+        if (!patientId || patientId <= 0) {
+            return res.status(400).json({ message: 'Invalid patient ID' });
+        }
+
+        // Direct call to smart contract without additional validation layer
+        const contractResponse = await contract.methods.getPatientDocuments(patientId).call();
+        console.log('Contract Response:', contractResponse);
+
+        if (!Array.isArray(contractResponse) || contractResponse.length === 0) {
+            return res.status(404).json({ message: 'No documents found for the patient' });
+        }
+
+        const Pdocuments = contractResponse.map(doc => ({
+            fileName: doc.fileName,
+            ipfsHash: doc.ipfsHash
+        }));
+
+        res.json({ Pdocuments });
+    } catch (error) {
+        console.error('Error fetching documents:', error);
+        return res.status(500).json({ message: `Error fetching documents from blockchain: ${error.message}` });
+    }
+});
 
 
 
-module.exports = { signin, blockchainUpload,upload, forget, reset, search, router };
+
+module.exports = { signin, blockchainUpload, upload, forget, reset, search, router };
 //module.exports = ipfs;

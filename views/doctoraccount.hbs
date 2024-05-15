@@ -71,6 +71,7 @@
                                 <th>Name</th>
                                 <th>Day</th>
                                 <th>Time</th>
+                                <th></th>
 
                             </tr>
 
@@ -83,6 +84,8 @@
                                 <td class="display">{{this.name}}</td>
                                 <td class="display">{{this.day}}</td>
                                 <td class="display">{{this.time}}</td>
+                                 <td><a href="/adddocument/{{this.patient_id}}" class="style"> add document</a></td>
+
 
                             </tr>
                             {{/each}}

@@ -117,7 +117,13 @@ router.get("/signin", (req, res) => {
 });
 
 router.get("/editprofile", (req, res) => {
-    res.render("editprofile.hbs",{
+    res.render("editprofile.hbs", {
+        username: req.session.name,
+        userProfileImage: req.session.image
+    });
+});
+router.get('/pdocument', (req, res) => {
+    res.render('pdocument.hbs', {
         username: req.session.name,
         userProfileImage: req.session.image
     });
@@ -135,7 +141,7 @@ router.get("/doctoraccount", (req, res, next) => {
         return res.redirect('/doctorlogin');
     }
 
-    const sql = "SELECT name, day, time FROM appointments WHERE doctor_name = ? AND day = CURDATE()";
+    const sql = "SELECT patient_id ,name, day, time FROM appointments WHERE doctor_name = ? AND day = CURDATE()";
 
 
     db.query(sql, [req.session.doctorname], (error, results) => {
@@ -187,6 +193,48 @@ router.get('/doctorresetpassword/:token', (req, res) => {
 
     res.render('doctorresetpassword.hbs', { token });
 });
+router.param('patientid', (req, res, next, patientid) => {
+    console.log(`patient ID is: ${patientid}`);
+    const sql = 'SELECT  * FROM appointments WHERE patient_id = ?';
+    db.query(sql, [patientid], (err, results) => {
+
+        if (err) {
+            return next(err);
+        }
+        if (results.length > 0) {
+            req.patient = patientid;
+            next();
+        } else {
+            return next(new Error('patient not found'));
+        }
+    });
+});
+router.get('/adddocument/:patientid', async (req, res, next) => {
+    try {
+        const patientid = req.params.patientid;
+        let [userResults] = await db.promise().query('SELECT  name FROM patient WHERE user_id=? ', [patientid]);
+        const user = userResults[0];
+        if (!user) {
+            res.status(404).send('Doctor not found');
+            return;
+        }
+        req.session.patient = {
+            id: patientid,
+            name: user.name
+        };
+        res.render('adddocument.hbs', {
+            patientid: req.patient.id,
+            doctorname: req.session.doctorname,
+            doctorProfileImage: req.session.doctorimage,
+        });
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+});
+
+
+
 
 router.get('/document', (req, res) => {
     res.render('document.hbs', {
@@ -195,17 +243,5 @@ router.get('/document', (req, res) => {
     });
 });
 
-router.get('/adddocument', (req, res) => {
-    res.render('adddocument.hbs', {
-        doctorname: req.session.doctorname,
-        doctorProfileImage: req.session.doctorimage,
-    });
-});
-router.get('/aa', (req, res) => {
-    res.render('aa.hbs', {
-        doctorname: req.session.doctorname,
-        doctorProfileImage: req.session.doctorimage,
-    });
-});
 
 module.exports = router;

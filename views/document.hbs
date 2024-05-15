@@ -78,8 +78,7 @@
                                 <i class="material-icons">search</i>
 
                             </div>
-                            <button class="btn btn-outline-success btn-sm" id="addDocumentButton" type="button"
-                                data-bs-toggle="modal" data-bs-target="#addDocumentModal">Add Document</button>
+                           
                         </form>
                     </div>
 
@@ -87,37 +86,11 @@
 
 
                     <!-- Modal -->
-                    <div class="modal fade" id="addDocumentModal" tabindex="-1" aria-labelledby="addDocumentModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="addDocumentModalLabel">Add Document</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form id="addDocumentForm" action="/doctor/upload" method="post"
-                                        enctype="multipart/form-data">
-                                        <div class="mb-3">
-                                            <label for="file" class="form-label">Choose File:</label>
-                                            <input type="file" class="form-control" id="file" name="file" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="fileName" class="form-label">File Name:</label>
-                                            <input type="text" class="form-control" id="fileName" name="fileName"
-                                                required>
-                                        </div>
-                                        <button type="submit" class="btn btn-primary">Upload</button>
-                                    </form>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
+                    
                 </div>
             </div>
         </div>
+
 
         <script>
 

@@ -61,13 +61,16 @@ a {
     color: rgb(85, 83, 83);
     display: table;
     padding: 10px;
-    
+
 }
-.style{
+
+.style {
     text-decoration: none;
     width: auto;
 }
-nav .fas ,.fab {
+
+nav .fas,
+.fab {
     position: relative;
     width: 70px;
     height: 25px;
@@ -75,26 +78,32 @@ nav .fas ,.fab {
     font-size: 20px;
     text-align: center;
 }
+
 .decoration {
     text-decoration: none !important;
-    display: grid ;
-    grid-template-rows: 1fr ;
-    grid-template-columns: repeat(2, 60px );
-    gap:  0px !important;
-    padding: 10px ;
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 60px 90px;
+    gap: 0px !important;
+    padding: 10px;
 }
-a.decoration:hover{
+
+a.decoration:hover {
     background-color: #ddd;
 }
+
 .item {
     position: relative;
     top: 12px;
     margin-left: 10px;
     text-decoration: none !important;
-    text-transform: lowercase !important; 
+    text-transform: lowercase !important;
     padding: 5px;
 }
 
+#addDocumentForm {
+    margin-top: 15% !important;
+}
 
 a:hover i {
     color: #34AF6D;
@@ -105,34 +114,39 @@ a:hover i {
     position: absolute;
     bottom: 0 !important;
     text-decoration: none;
-    background-color:transparent;
+    background-color: transparent;
     padding-left: 10px;
-    padding-top: 50%;
-    padding-bottom: 0%;
+    padding-bottom: 15% !important;
 
 
 }
-.log{
-    position: absolute ;
+
+.log {
+    position: absolute;
     bottom: 0 !important;
-    top:90%;
+    top: 90%;
+    width: 200px;
+    cursor: pointer;
+
 }
 
 .contner {
     display: flex;
 }
-.main{
+
+.main {
     font-family: Arial, sans-serif;
     margin: auto;
 }
+
 h1 {
-    color:black;
+    color: black;
     margin-bottom: 25px;
     font-size: 25px;
-    text-align:center
-
+    text-align: center
 }
-h1.UT{
+
+h1.UT {
     font-size: 19px !important;
 }
 
@@ -147,8 +161,11 @@ label {
     font-weight: bold;
 }
 
-input[type="text"], input[type="email"], input[type="password"] ,input[type="file"]{
-   
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="file"] {
+
     width: 130%;
     background-color: #f5f3f3;
     margin: 10px 0;
@@ -156,14 +173,16 @@ input[type="text"], input[type="email"], input[type="password"] ,input[type="fil
     border-radius: 55px;
     border: 1px solid #38968e;
 
-    padding:  0.4rem;
+    padding: 0.4rem;
 }
-input[type="file"]{
+
+input[type="file"] {
     background-color: #f5f3f3;
 }
 
 
-input.cc , .cc {
+input.cc,
+.cc {
     width: 150px;
     height: 40px;
     border: none;
@@ -173,49 +192,74 @@ input.cc , .cc {
     background-color: #38968e;
     color: #fff;
     text-transform: uppercase;
-    margin: 10px 6px ;
+    margin: 10px 6px;
 
 }
- 
+
+
+form .form-label {
+    font-weight: bold;
+}
+
+form .form-control {
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+form button[type="submit"] {
+    padding: 8px 20px;
+}
+
 @media (max-width: 627px) {
     nav {
         width: 58px;
     }
+
     .main {
         padding: 20px 10px 20px 5px !important;
     }
-    .decoration,.log{
-        grid-template-columns: repeat(2, 46px );
 
-    }
-    .item{
+    .item {
         margin: 0;
     }
-    .logo{
+
+    .logo {
         margin-left: 3px;
         padding-left: 2px;
-        
+
     }
-    .nav-bar{
+    nav:hover {
+        width: 210px;
+        transition: 1s;
+    }
+    .nav-bar {
         display: grid !important;
         grid-template-rows: repeat(2, 1fr) !important;
         grid-template-columns: 1fr;
         gap: 1.5em;
     }
-   
-    .nav-title{
+
+    .nav-title {
         order: 2;
     }
-    nav .fas,.fab{
+
+    nav .fas,
+    .fab {
         width: 50px;
 
     }
-    nav{
-        width: 58px;
+
+    #addDocumentForm {
+
+        margin-top: 50% !important;
+
     }
-    input[type="text"], input[type="email"], input[type="password"], input[type="file"] {
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="file"] {
         width: 100%;
     }
 
 }
-
